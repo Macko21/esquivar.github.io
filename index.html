@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍔 GRAVITY REVERSE - 1000 POINTS ⚡</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+            overflow: hidden;
+        }
+
+        .game-container {
+            text-align: center;
+            background: rgba(0,0,0,0.9);
+            padding: 20px;
+            border-radius: 30px;
+            box-shadow: 0 0 100px #ff00ff, 0 0 200px #00ffff;
+            border: 3px solid #ffff00;
+            animation: borderPulse 2s infinite;
+        }
+
+        @keyframes borderPulse {
+            0% { border-color: #ffff00; box-shadow: 0 0 100px #ff00ff; }
+            50% { border-color: #ff00ff; box-shadow: 0 0 100px #00ffff; }
+            100% { border-color: #ffff00; box-shadow: 0 0 100px #ff00ff; }
+        }
+
+        h1 {
+            margin-bottom: 15px;
+            font-size: 2.2em;
+            background: linear-gradient(45deg, #ffaa00, #ff00ff, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px #ffaa00;
+            animation: titleGlow 1s infinite;
+        }
+
+        @keyframes titleGlow {
+            0% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(20deg); }
+            100% { filter: hue-rotate(0deg); }
+        }
+
+        canvas {
+            border: 3px solid #ffff00;
+            border-radius: 15px;
+            background: linear-gradient(180deg, #0a0a2a 0%, #2a0a2a 100%);
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 0 50px #ff00ff;
+            transition: transform 0.5s;
+        }
+
+        .canvas-reverse {
+            transform: rotate(180deg);
+        }
+
+        .stats-panel {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255,255,0,0.1);
+            padding: 10px;
+            border-radius: 50px;
+            border: 2px solid #ffff00;
+            backdrop-filter: blur(5px);
+        }
+
+        .stat {
+            font-size: 1.1em;
+            color: #00ffff;
+        }
+
+        .stat span {
+            color: #ffff00;
+            font-weight: bold;
+            font-size: 1.6em;
+            text-shadow: 0 0 20px #ffff00;
+        }
+
+        .warning {
+            color: #ff00ff;
+            font-size: 1.2em;
+            margin-top: 5px;
+            text-shadow: 0 0 20px #ff00ff;
+            animation: warningPulse 0.5s infinite;
+        }
+
+        @keyframes warningPulse {
+            0% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0.5; transform: scale(1); }
+        }
+
+        .power-bar {
+            margin-top: 10px;
+            height: 8px;
+            background: rgba(255,0,255,0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            border: 1px solid #ffff00;
+        }
+
+        .power-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ffff00, #ffaa00, #ff00ff);
+            transition: width 0.1s;
+        }
+
+        .gravity-indicator {
+            position: absolute;
+            color: #00ffff;
+            font-size: 1.5em;
+            margin-left: 10px;
+            animation: gravitySpin 1s infinite;
+        }
+
+        @keyframes gravitySpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 8px 20px;
+            font-size: 0.9em;
+            background: transparent;
+            color: white;
+            border: 2px solid #ffff00;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #ffff00;
+            color: black;
+            box-shadow: 0 0 30px #ffff00;
+        }
+
+        .music-control {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .volume-slider {
+            width: 100px;
+            height: 5px;
+            -webkit-appearance: none;
+            background: linear-gradient(90deg, #ffff00, #ff00ff);
+            border-radius: 5px;
+        }
+
+        .game-over {
+            color: #ffff00;
+            font-size: 2em;
+            display: none;
+            text-shadow: 0 0 30px #ffff00;
+            margin: 10px 0;
+        }
+
+        .game-over.show {
+            display: block;
+        }
+
+        .next-reverse {
+            color: #ff00ff;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1 id="gameTitle">🍔 GRAVITY REVERSE 🍔</h1>
+        
+        <canvas id="gameCanvas" width="700" height="450"></canvas>
+        
+        <div class="stats-panel">
+            <div class="stat">PUNTOS <span id="score">0</span></div>
+            <div class="stat">🍔 POWER <span id="powerTime">0</span></div>
+            <div class="stat">⚡ VEL <span id="speed">1.0x</span></div>
+        </div>
+
+        <div class="warning" id="gravityWarning"></div>
+        <div class="next-reverse" id="nextReverse">⬇️ GRAVEDAD NORMAL ⬇️</div>
+
+        <div class="power-bar">
+            <div class="power-fill" id="powerFill"></div>
+        </div>
+
+        <div class="game-over" id="gameOver">
+            💀 GAME OVER 💀
+        </div>
+        
+        <div class="controls">
+            <button onclick="startGame()">🔥 REINICIAR</button>
+            <button onclick="togglePause()">⏯️ PAUSA</button>
+        </div>
+
+        <div class="music-control">
+            <button onclick="toggleMusic()" id="musicButton">🔊 AUDIO</button>
+            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.1" value="0.5">
+        </div>
+        
+        <div class="instructions">
+            <p>← → MOVER | ESPACIO SALTAR | 🟡 PLATAFORMA MÓVIL = INVINCIBLE</p>
+            <p>⚡ CADA 1000 PUNTOS: ¡GRAVEDAD INVERSA! (ESQUIVA DESDE ARRIBA)</p>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const powerTimeElement = document.getElementById('powerTime');
+        const speedElement = document.getElementById('speed');
+        const powerFill = document.getElementById('powerFill');
+        const gameOverElement = document.getElementById('gameOver');
+        const musicButton = document.getElementById('musicButton');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const gravityWarning = document.getElementById('gravityWarning');
+        const nextReverse = document.getElementById('nextReverse');
+
+        // ========== AUDIO ==========
+        let audioContext;
+        let musicEnabled = true;
+        let masterGain;
+        let kickGain, snareGain, hihatGain, synthGain, bassGain;
+        let currentBPM = 130;
+        let baseBPM = 130;
+        let beatCount = 0;
+        let nextNoteTime = 0;
+        let timerID;
+
+        // ========== PERSONAJE ==========
+        const player = {
+            x: 350,
+            y: 380, // Posición inicial en suelo
+            width: 25,
+            height: 35,
+            normalWidth: 25,
+            normalHeight: 35,
+            bigWidth: 40,
+            bigHeight: 55,
+            velocityY: 0,
+            gravity: 0.7,
+            jumpPower: -13,
+            grounded: false,
+            onPlatform: false,
+            invincible: false,
+            invincibleTime: 0,
+            maxInvincibleTime: 300,
+            trail: []
+        };
+
+        // ========== PLATAFORMA MÓVIL ==========
+        const platform = {
+            x: 250,
+            y: 300,
+            width: 180,
+            height: 20,
+            active: true,
+            visible: true,
+            direction: 1,
+            speed: 1.5,
+            minX: 50,
+            maxX: 470,
+            timer: 0,
+            maxTimer: 300, // 5 segundos (más tiempo)
+            state: 'moving'
+        };
+
+        // ========== SISTEMA DE GRAVEDAD ==========
+        let gravityDirection = 1; // 1 = normal (hacia abajo), -1 = invertida (hacia arriba)
+        let nextGravityFlip = 1000;
+        let lastFlipScore = 0;
+
+        // ========== OBSTÁCULOS Y POWER-UPS ==========
+        let obstacles = [];
+        let burgers = [];
+        let frameCount = 0;
+        let score = 0;
+        let gameActive = false;
+        let gamePaused = false;
+        let animationId = null;
+        
+        // Velocidad progresiva (más rápida)
+        let speedMultiplier = 1.0;
+        const MAX_SPEED = 3.0;
+        const SPEED_INCREMENT = 0.001; // El doble de rápida
+
+        // Controles
+        let leftPressed = false;
+        let rightPressed = false;
+        let spacePressed = false;
+
+        // ========== FUNCIONES DE AUDIO ==========
+        function initAudio() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                masterGain = audioContext.createGain();
+                
+                kickGain = audioContext.createGain();
+                snareGain = audioContext.createGain();
+                hihatGain = audioContext.createGain();
+                bassGain = audioContext.createGain();
+                synthGain = audioContext.createGain();
+                
+                kickGain.connect(masterGain);
+                snareGain.connect(masterGain);
+                hihatGain.connect(masterGain);
+                bassGain.connect(masterGain);
+                synthGain.connect(masterGain);
+                
+                masterGain.connect(audioContext.destination);
+                
+                masterGain.gain.value = volumeSlider.value;
+                kickGain.gain.value = 0.4;
+                snareGain.gain.value = 0.3;
+                hihatGain.gain.value = 0.2;
+                bassGain.gain.value = 0.35;
+                synthGain.gain.value = 0.25;
+                
+                startMusic();
+            } catch (e) {
+                console.log("Error de audio:", e);
+            }
+        }
+
+        function startMusic() {
+            if (!audioContext || !musicEnabled) return;
+            stopMusic();
+            nextNoteTime = audioContext.currentTime;
+            scheduleBeats();
+        }
+
+        function stopMusic() {
+            if (timerID) clearTimeout(timerID);
+        }
+
+        function scheduleBeats() {
+            if (!audioContext || !musicEnabled || !gameActive || gamePaused) return;
+
+            const now = audioContext.currentTime;
+            
+            while (nextNoteTime < now + 0.1) {
+                const beatDuration = 60 / currentBPM;
+                
+                // Ritmo base
+                if (beatCount % 4 === 0) playKick(nextNoteTime);
+                if (beatCount % 4 === 2) playSnare(nextNoteTime);
+                playHiHat(nextNoteTime, beatDuration * 0.5);
+                
+                // Bajo
+                if (beatCount % 2 === 0) {
+                    playBass(nextNoteTime, beatDuration * 2, 36 + (beatCount % 12));
+                }
+                
+                // Melodía especial para cambio de gravedad
+                if (gravityDirection === -1 && beatCount % 2 === 0) {
+                    playReverseMelody(nextNoteTime, beatDuration * 2);
+                }
+                
+                nextNoteTime += beatDuration;
+                beatCount++;
+            }
+            
+            timerID = setTimeout(scheduleBeats, 25);
+        }
+
+        function playKick(time) {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(80, time);
+            osc.frequency.exponentialRampToValueAtTime(40, time + 0.1);
+            gain.gain.setValueAtTime(0.5, time);
+            gain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
+            osc.connect(gain);
+            gain.connect(kickGain);
+            osc.start(time);
+            osc.stop(time + 0.1);
+        }
+
+        function playSnare(time) {
+            const bufferSize = audioContext.sampleRate * 0.1;
+            const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+                data[i] *= Math.exp(-i / (audioContext.sampleRate * 0.05));
+            }
+            const noise = audioContext.createBufferSource();
+            noise.buffer = buffer;
+            const gain = audioContext.createGain();
+            gain.gain.setValueAtTime(0.4, time);
+            gain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
+            noise.connect(gain);
+            gain.connect(snareGain);
+            noise.start(time);
+            noise.stop(time + 0.1);
+        }
+
+        function playHiHat(time, duration) {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.type = 'square';
+            osc.frequency.value = 1000;
+            gain.gain.setValueAtTime(0.15, time);
+            gain.gain.exponentialRampToValueAtTime(0.01, time + duration);
+            osc.connect(gain);
+            gain.connect(hihatGain);
+            osc.start(time);
+            osc.stop(time + duration);
+        }
+
+        function playBass(time, duration, note) {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.value = 440 * Math.pow(2, (note - 69) / 12);
+            gain.gain.setValueAtTime(0, time);
+            gain.gain.linearRampToValueAtTime(0.4, time + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.01, time + duration);
+            osc.connect(gain);
+            gain.connect(bassGain);
+            osc.start(time);
+            osc.stop(time + duration);
+        }
+
+        function playReverseMelody(time, duration) {
+            const notes = [72, 75, 79, 84, 88, 84, 79, 75];
+            const note = notes[beatCount % notes.length];
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.value = 440 * Math.pow(2, (note - 69) / 12);
+            gain.gain.setValueAtTime(0, time);
+            gain.gain.linearRampToValueAtTime(0.3, time + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.01, time + duration);
+            osc.connect(gain);
+            gain.connect(synthGain);
+            osc.start(time);
+            osc.stop(time + duration);
+        }
+
+        // ========== LÓGICA DEL JUEGO ==========
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') { leftPressed = true; e.preventDefault(); }
+            else if (e.key === 'ArrowRight') { rightPressed = true; e.preventDefault(); }
+            else if (e.key === ' ') { spacePressed = true; e.preventDefault(); }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft') { leftPressed = false; e.preventDefault(); }
+            else if (e.key === 'ArrowRight') { rightPressed = false; e.preventDefault(); }
+            else if (e.key === ' ') { spacePressed = false; e.preventDefault(); }
+        });
+
+        function checkGravityFlip() {
+            if (score >= nextGravityFlip && score > lastFlipScore) {
+                // Cambiar gravedad
+                gravityDirection *= -1;
+                lastFlipScore = score;
+                nextGravityFlip = score + 1000;
+                
+                // Invertir posición del personaje
+                if (gravityDirection === -1) {
+                    player.y = 50; // Aparece arriba
+                    canvas.style.transform = 'rotate(180deg)';
+                    gravityWarning.innerHTML = '⚠️ ¡GRAVEDAD INVERTIDA! ⚠️';
+                    nextReverse.innerHTML = '⬆️ GRAVEDAD INVERTIDA ⬆️';
+                } else {
+                    player.y = 380; // Vuelve al suelo
+                    canvas.style.transform = 'rotate(0deg)';
+                    gravityWarning.innerHTML = '';
+                    nextReverse.innerHTML = '⬇️ GRAVEDAD NORMAL ⬇️';
+                }
+                
+                // Limpiar obstáculos al cambiar gravedad
+                obstacles = [];
+                
+                // Efecto visual
+                setTimeout(() => {
+                    gravityWarning.innerHTML = '';
+                }, 2000);
+            }
+        }
+
+        function updatePlatform() {
+            // La plataforma tarda más en desaparecer (5 segundos)
+            if (platform.state === 'moving') {
+                platform.x += platform.direction * platform.speed;
+                
+                if (platform.x <= platform.minX) platform.direction = 1;
+                else if (platform.x >= platform.maxX) platform.direction = -1;
+                
+                platform.timer++;
+                if (platform.timer >= platform.maxTimer) {
+                    platform.state = 'disappearing';
+                    platform.timer = 0;
+                    platform.visible = false;
+                }
+            } 
+            else if (platform.state === 'disappearing') {
+                platform.timer++;
+                if (platform.timer >= 90) { // 1.5 segundos desaparecida
+                    platform.state = 'appearing';
+                    platform.timer = 0;
+                }
+            }
+            else if (platform.state === 'appearing') {
+                platform.timer++;
+                if (platform.timer >= 90) { // 1.5 segundos para reaparecer
+                    platform.state = 'moving';
+                    platform.timer = 0;
+                    platform.visible = true;
+                    platform.x = Math.random() * (platform.maxX - platform.minX) + platform.minX;
+                }
+            }
+        }
+
+        function updatePlayer() {
+            if (!gameActive || gamePaused) return;
+
+            // Movimiento horizontal
+            if (leftPressed && player.x > 0) {
+                player.x -= 5;
+            }
+            if (rightPressed && player.x + player.width < canvas.width) {
+                player.x += 5;
+            }
+
+            // Salto (siempre hacia arriba en coordenadas de pantalla)
+            if (spacePressed && (player.grounded || player.onPlatform)) {
+                player.velocityY = player.jumpPower;
+                player.grounded = false;
+                player.onPlatform = false;
+            }
+
+            // Gravedad (afectada por dirección)
+            player.velocityY += player.gravity * gravityDirection;
+            player.y += player.velocityY;
+
+            // Límites según gravedad
+            if (gravityDirection === 1) { // Normal (suelo abajo)
+                if (player.y > 380) {
+                    player.y = 380;
+                    player.velocityY = 0;
+                    player.grounded = true;
+                }
+                if (player.y < 0) {
+                    player.y = 0;
+                    player.velocityY = 0;
+                }
+            } else { // Invertida (suelo arriba)
+                if (player.y < 50) {
+                    player.y = 50;
+                    player.velocityY = 0;
+                    player.grounded = true;
+                }
+                if (player.y > canvas.height - player.height) {
+                    player.y = canvas.height - player.height;
+                    player.velocityY = 0;
+                }
+            }
+
+            // Colisión con plataforma (adaptada a gravedad)
+            if (platform.visible) {
+                if (gravityDirection === 1) { // Normal
+                    if (player.velocityY >= 0 &&
+                        player.x + player.width > platform.x &&
+                        player.x < platform.x + platform.width &&
+                        player.y + player.height > platform.y &&
+                        player.y + player.height < platform.y + platform.height + 10) {
+                        
+                        player.y = platform.y - player.height;
+                        player.velocityY = 0;
+                        player.onPlatform = true;
+                        player.grounded = false;
+                        
+                        player.invincible = true;
+                        player.invincibleTime = player.maxInvincibleTime;
+                        player.width = player.bigWidth;
+                        player.height = player.bigHeight;
+                    }
+                } else { // Invertida
+                    if (player.velocityY <= 0 &&
+                        player.x + player.width > platform.x &&
+                        player.x < platform.x + platform.width &&
+                        player.y < platform.y + platform.height &&
+                        player.y > platform.y - 10) {
+                        
+                        player.y = platform.y + platform.height;
+                        player.velocityY = 0;
+                        player.onPlatform = true;
+                        player.grounded = false;
+                        
+                        player.invincible = true;
+                        player.invincibleTime = player.maxInvincibleTime;
+                        player.width = player.bigWidth;
+                        player.height = player.bigHeight;
+                    }
+                }
+            }
+
+            // Actualizar invencibilidad
+            if (!player.onPlatform && player.invincible) {
+                player.invincibleTime--;
+                if (player.invincibleTime <= 0) {
+                    player.invincible = false;
+                    player.width = player.normalWidth;
+                    player.height = player.normalHeight;
+                }
+            }
+
+            // Trail
+            player.trail.push({x: player.x + player.width/2, y: player.y + player.height/2});
+            if (player.trail.length > 8) player.trail.shift();
+
+            // UI de power
+            if (player.invincible) {
+                const percent = (player.invincibleTime / player.maxInvincibleTime) * 100;
+                powerFill.style.width = percent + '%';
+                powerTimeElement.textContent = Math.ceil(player.invincibleTime / 60) + 's';
+            } else {
+                powerFill.style.width = '0%';
+                powerTimeElement.textContent = '0';
+            }
+        }
+
+        function updateSpeed() {
+            // Velocidad más rápida pero progresiva
+            speedMultiplier = Math.min(MAX_SPEED, 1.0 + (score * SPEED_INCREMENT));
+            currentBPM = Math.min(180, baseBPM + (score * 0.15));
+            speedElement.textContent = speedMultiplier.toFixed(2) + 'x';
+        }
+
+        function createObstacle() {
+            const types = [
+                { width: 20, height: 20, color: '#ff3366', points: 10 },
+                { width: 25, height: 20, color: '#ff6600', points: 12 },
+                { width: 20, height: 25, color: '#ff00ff', points: 15 }
+            ];
+            const type = types[Math.floor(Math.random() * types.length)];
+            
+            let yStart;
+            if (gravityDirection === 1) {
+                yStart = -type.height; // Vienen desde arriba
+            } else {
+                yStart = canvas.height + type.height; // Vienen desde abajo
+            }
+            
+            return {
+                ...type,
+                x: Math.random() * (canvas.width - type.width),
+                y: yStart,
+                speed: 2.5 + (speedMultiplier * 1.8) + Math.random() * 1.5,
+                passed: false,
+                direction: gravityDirection === 1 ? 1 : -1
+            };
+        }
+
+        function createBurger() {
+            let yStart;
+            if (gravityDirection === 1) {
+                yStart = -30;
+            } else {
+                yStart = canvas.height + 30;
+            }
+            
+            return {
+                x: Math.random() * (canvas.width - 30),
+                y: yStart,
+                width: 30,
+                height: 30,
+                speed: 2 + (speedMultiplier * 1.5),
+                collected: false,
+                direction: gravityDirection === 1 ? 1 : -1
+            };
+        }
+
+        function updateObstacles() {
+            if (!gameActive || gamePaused) return;
+
+            const spawnRate = Math.max(25, 45 - Math.floor(speedMultiplier * 6));
+            
+            if (frameCount % spawnRate === 0) {
+                obstacles.push(createObstacle());
+            }
+
+            if (frameCount % 180 === 0 && burgers.length < 1) {
+                burgers.push(createBurger());
+            }
+
+            // Obstáculos
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                const obs = obstacles[i];
+                obs.y += obs.speed * speedMultiplier * obs.direction;
+
+                // Puntos por esquivar
+                if (!obs.passed) {
+                    if (gravityDirection === 1 && obs.y > canvas.height) {
+                        obs.passed = true;
+                        score += Math.floor(obs.points * speedMultiplier);
+                        scoreElement.textContent = score;
+                        updateSpeed();
+                        checkGravityFlip();
+                    } else if (gravityDirection === -1 && obs.y < -obs.height) {
+                        obs.passed = true;
+                        score += Math.floor(obs.points * speedMultiplier);
+                        scoreElement.textContent = score;
+                        updateSpeed();
+                        checkGravityFlip();
+                    }
+                }
+
+                if (obs.y > canvas.height + 100 || obs.y < -100) {
+                    obstacles.splice(i, 1);
+                }
+
+                // Colisión
+                if (!player.invincible && !obs.passed &&
+                    player.x < obs.x + obs.width &&
+                    player.x + player.width > obs.x &&
+                    player.y < obs.y + obs.height &&
+                    player.y + player.height > obs.y) {
+                    
+                    gameActive = false;
+                    gameOverElement.classList.add('show');
+                    stopMusic();
+                    cancelAnimationFrame(animationId);
+                    return;
+                }
+            }
+
+            // Hamburguesas
+            for (let i = burgers.length - 1; i >= 0; i--) {
+                const burger = burgers[i];
+                burger.y += burger.speed * speedMultiplier * burger.direction;
+
+                if (!burger.collected &&
+                    player.x < burger.x + burger.width &&
+                    player.x + player.width > burger.x &&
+                    player.y < burger.y + burger.height &&
+                    player.y + player.height > burger.y) {
+                    
+                    burger.collected = true;
+                    player.invincible = true;
+                    player.invincibleTime = player.maxInvincibleTime;
+                    player.width = player.bigWidth;
+                    player.height = player.bigHeight;
+                    score += 50;
+                    scoreElement.textContent = score;
+                    updateSpeed();
+                    checkGravityFlip();
+                }
+
+                if (burger.y > canvas.height + 100 || burger.y < -100) {
+                    burgers.splice(i, 1);
+                }
+            }
+
+            frameCount++;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Fondo con efecto de gravedad
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            if (gravityDirection === 1) {
+                gradient.addColorStop(0, '#0a0a2a');
+                gradient.addColorStop(1, '#2a0a2a');
+            } else {
+                gradient.addColorStop(0, '#2a0a2a');
+                gradient.addColorStop(1, '#0a0a2a');
+            }
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Suelo (se adapta a gravedad)
+            ctx.shadowBlur = 20;
+            if (gravityDirection === 1) {
+                ctx.fillStyle = '#00ffff';
+                ctx.shadowColor = '#00ffff';
+                ctx.fillRect(0, 405, canvas.width, 5);
+                ctx.fillStyle = '#ff00ff';
+                ctx.fillRect(0, 410, canvas.width, 3);
+            } else {
+                ctx.fillStyle = '#ff00ff';
+                ctx.shadowColor = '#ff00ff';
+                ctx.fillRect(0, 40, canvas.width, 5);
+                ctx.fillStyle = '#00ffff';
+                ctx.fillRect(0, 35, canvas.width, 3);
+            }
+
+            // Plataforma
+            if (platform.visible) {
+                ctx.shadowColor = '#ffff00';
+                ctx.shadowBlur = 30;
+                ctx.fillStyle = '#ffaa00';
+                ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+                
+                ctx.font = 'bold 10px Arial';
+                ctx.fillStyle = '#ffff00';
+                ctx.fillText('🛡️ SEGURO', platform.x + 50, platform.y - 10);
+                
+                // Timer de plataforma
+                ctx.font = '8px Arial';
+                ctx.fillStyle = '#00ffff';
+                ctx.fillText('⏰ ' + Math.ceil((platform.maxTimer - platform.timer)/60) + 's', 
+                           platform.x + platform.width - 30, platform.y - 5);
+            }
+
+            // Trail del jugador
+            player.trail.forEach((pos, i) => {
+                const alpha = (i / player.trail.length) * 0.3;
+                ctx.fillStyle = player.invincible ? `rgba(255, 255, 0, ${alpha})` : `rgba(0, 255, 255, ${alpha})`;
+                ctx.shadowBlur = 20;
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, 12, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Jugador
+            ctx.shadowBlur = 40;
+            ctx.shadowColor = player.invincible ? '#ffff00' : '#00ffff';
+            
+            ctx.fillStyle = player.invincible ? '#ffff00' : '#00ffff';
+            ctx.beginPath();
+            ctx.ellipse(player.x + player.width/2, player.y + player.height/2, 
+                       player.width/2, player.height/2, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Ojos
+            ctx.fillStyle = 'white';
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.arc(player.x + player.width/3, player.y + player.height/3, 3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(player.x + 2*player.width/3, player.y + player.height/3, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Hamburguesas
+            burgers.forEach(burger => {
+                ctx.shadowColor = '#ffff00';
+                ctx.shadowBlur = 30;
+                ctx.font = '25px Arial';
+                ctx.fillStyle = '#ffff00';
+                ctx.fillText('🍔', burger.x, burger.y + 20);
+            });
+
+            // Obstáculos
+            obstacles.forEach(obs => {
+                ctx.shadowColor = obs.color;
+                ctx.shadowBlur = 20;
+                ctx.fillStyle = obs.color;
+                ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+            });
+
+            // Indicador de próxima inversión
+            ctx.shadowBlur = 0;
+            ctx.font = 'bold 14px Arial';
+            ctx.fillStyle = '#ff00ff';
+            ctx.fillText(`🔄 PRÓXIMO: ${nextGravityFlip - score} pts`, 10, 30);
+            
+            // Indicador de gravedad
+            ctx.font = 'bold 16px Arial';
+            ctx.fillStyle = gravityDirection === 1 ? '#00ffff' : '#ff00ff';
+            ctx.fillText(gravityDirection === 1 ? '⬇️ NORMAL ⬇️' : '⬆️ INVERTIDA ⬆️', 250, 30);
+        }
+
+        function gameLoop() {
+            if (gameActive && !gamePaused) {
+                updatePlatform();
+                updatePlayer();
+                updateObstacles();
+            }
+            draw();
+            if (gameActive) animationId = requestAnimationFrame(gameLoop);
+        }
+
+        function startGame() {
+            obstacles = [];
+            burgers = [];
+            player.x = 350;
+            player.y = 380;
+            player.width = player.normalWidth;
+            player.height = player.normalHeight;
+            player.invincible = false;
+            player.grounded = true;
+            gravityDirection = 1;
+            nextGravityFlip = 1000;
+            lastFlipScore = 0;
+            canvas.style.transform = 'rotate(0deg)';
+            gravityWarning.innerHTML = '';
+            nextReverse.innerHTML = '⬇️ GRAVEDAD NORMAL ⬇️';
+            
+            frameCount = 0;
+            score = 0;
+            speedMultiplier = 1.0;
+            currentBPM = baseBPM;
+            scoreElement.textContent = '0';
+            speedElement.textContent = '1.00x';
+            powerTimeElement.textContent = '0';
+            powerFill.style.width = '0%';
+            gameActive = true;
+            gamePaused = false;
+            gameOverElement.classList.remove('show');
+            
+            beatCount = 0;
+            nextNoteTime = 0;
+            
+            if (animationId) cancelAnimationFrame(animationId);
+            if (audioContext && musicEnabled) startMusic();
+            gameLoop();
+        }
+
+        function togglePause() {
+            if (gameActive) {
+                gamePaused = !gamePaused;
+                gamePaused ? stopMusic() : startMusic();
+            }
+        }
+
+        function toggleMusic() {
+            if (!audioContext) initAudio();
+            if (audioContext) {
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                    musicEnabled = true;
+                    musicButton.textContent = '🔊 AUDIO';
+                    startMusic();
+                } else if (musicEnabled) {
+                    audioContext.suspend();
+                    musicEnabled = false;
+                    musicButton.textContent = '🔈 AUDIO';
+                    stopMusic();
+                } else {
+                    audioContext.resume();
+                    musicEnabled = true;
+                    musicButton.textContent = '🔊 AUDIO';
+                    startMusic();
+                }
+            }
+        }
+
+        volumeSlider.addEventListener('input', (e) => {
+            if (masterGain) masterGain.gain.value = e.target.value;
+        });
+
+        document.addEventListener('click', function initAudioOnFirstClick() {
+            if (!audioContext) initAudio();
+            document.removeEventListener('click', initAudioOnFirstClick);
+        });
+
+        window.onload = startGame;
+    </script>
+</body>
+</html>
