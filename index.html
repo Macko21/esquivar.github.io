@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>🍔 GRAVITY PARTY - DUAL CONTROL 🍔</title>
+    <title>🍔 GRAVITY PARTY - 3 VIDAS 🍔</title>
     <style>
         * {
             margin: 0;
@@ -88,6 +88,31 @@
             text-shadow: 0 0 20px #ffff00;
         }
 
+        .lives-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .heart {
+            font-size: 2rem;
+            color: #ff3366;
+            text-shadow: 0 0 20px #ff3366;
+            animation: heartPulse 1s infinite;
+        }
+
+        .heart.empty {
+            opacity: 0.3;
+            filter: grayscale(100%);
+        }
+
+        @keyframes heartPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
         .power-bar-container {
             margin-top: 10px;
             display: flex;
@@ -112,7 +137,7 @@
             transition: width 0.1s;
         }
 
-        /* CONTROLES TÁCTILES - SOLO VISIBLE EN MÓVIL */
+        /* CONTROLES TÁCTILES */
         .touch-controls {
             display: none;
             flex-direction: column;
@@ -169,7 +194,7 @@
             box-shadow: 0 0 40px #ff00ff;
         }
 
-        /* INDICADOR DE TECLAS PARA DESKTOP */
+        /* HINT PARA TECLADO */
         .keyboard-hint {
             display: block;
             color: #00ffff;
@@ -188,6 +213,21 @@
             background: rgba(255,255,255,0.1);
             border: 2px solid #ffff00;
             border-radius: 10px;
+            color: #ffff00;
+            font-weight: bold;
+        }
+
+        .restart-hint {
+            color: #ff00ff;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            padding: 5px;
+            background: rgba(255,0,255,0.1);
+            border-radius: 20px;
+            border: 1px solid #ff00ff;
+        }
+
+        .restart-hint span {
             color: #ffff00;
             font-weight: bold;
         }
@@ -313,6 +353,15 @@
                 font-size: 1.2rem;
             }
 
+            .lives-container {
+                margin-top: 5px;
+                flex-shrink: 0;
+            }
+
+            .heart {
+                font-size: 1.5rem;
+            }
+
             .power-bar-container {
                 margin-top: 5px;
                 flex-shrink: 0;
@@ -328,6 +377,10 @@
             }
 
             .keyboard-hint {
+                display: none;
+            }
+
+            .restart-hint {
                 display: none;
             }
 
@@ -357,14 +410,21 @@
 </head>
 <body>
     <div class="game-container">
-        <h1>🍔 GRAVITY PARTY 🍔</h1>
+        <h1>🍔 3 VIDAS PARTY 🍔</h1>
         
         <canvas id="gameCanvas" width="700" height="450"></canvas>
         
         <div class="stats-panel">
             <div class="stat">PUNTOS <span id="score">0</span></div>
-            <div class="stat">🎵 <span id="bpm">160</span></div>
-            <div class="stat">⚡ <span id="speed">1.0x</span></div>
+            <div class="stat">🎵 <span id="bpm">120</span></div>
+            <div class="stat">⚡ <span id="speed">0.5x</span></div>
+        </div>
+
+        <!-- VIDAS -->
+        <div class="lives-container" id="livesContainer">
+            <span class="heart" id="life1">❤️</span>
+            <span class="heart" id="life2">❤️</span>
+            <span class="heart" id="life3">❤️</span>
         </div>
 
         <div class="power-bar-container">
@@ -375,12 +435,16 @@
             <span style="color: #ffff00;" id="powerTime">0s</span>
         </div>
 
-        <!-- HINT PARA TECLADO (DESKTOP) -->
+        <!-- HINT PARA TECLADO -->
         <div class="keyboard-hint">
-            <span>←</span> <span>→</span> <span>ESPACIO</span> PARA MOVERTE
+            <span>←</span> <span>→</span> <span>ESPACIO</span> MOVERSE
+        </div>
+        
+        <div class="restart-hint">
+            💀 PRESIONA <span>R</span> PARA REINICIAR 💀
         </div>
 
-        <!-- CONTROLES TÁCTILES (MÓVIL) -->
+        <!-- CONTROLES TÁCTILES -->
         <div class="touch-controls">
             <div class="touch-row">
                 <div class="touch-btn" id="touchLeft">
@@ -405,7 +469,7 @@
         </div>
         
         <div class="controls">
-            <button onclick="startGame()">🔥 NUEVA PARTIDA</button>
+            <button onclick="restartGame()">🔥 REINICIAR</button>
             <button onclick="togglePause()">⏸️ PAUSA</button>
         </div>
 
@@ -415,7 +479,7 @@
         </div>
         
         <div class="instructions">
-            <p>🟡 BARRA = 3s PODER | 🍔 HAMBURGUESA = 3s EXTRA</p>
+            <p>🟡 BARRA = 3s PODER | 🍔 = 3s EXTRA | ❤️ 3 VIDAS</p>
             <p>⚡ CADA 1000 PUNTOS: ¡GRAVEDAD INVERSA!</p>
         </div>
     </div>
@@ -431,13 +495,17 @@
         const gameOverElement = document.getElementById('gameOver');
         const musicButton = document.getElementById('musicButton');
         const volumeSlider = document.getElementById('volumeSlider');
+        const livesContainer = document.getElementById('livesContainer');
+        const life1 = document.getElementById('life1');
+        const life2 = document.getElementById('life2');
+        const life3 = document.getElementById('life3');
 
         // ========== AUDIO ==========
         let audioContext;
         let musicEnabled = true;
         let masterGain;
         let kickGain, snareGain, hihatGain, bassGain, leadGain, arpGain;
-        let currentBPM = 160;
+        let currentBPM = 120; // Empieza más lento
         let beatCount = 0;
         let nextNoteTime = 0;
         let timerID;
@@ -479,7 +547,7 @@
             height: 15,
             visible: true,
             direction: 1,
-            speed: 5.0,
+            speed: 4.0,
             minX: 50,
             maxX: 550,
             timer: 0,
@@ -492,6 +560,10 @@
         let nextGravityFlip = 1000;
         let lastFlipScore = 0;
 
+        // ========== SISTEMA DE VIDAS ==========
+        let lives = 3;
+        let gameOver = false;
+
         // ========== OBSTÁCULOS ==========
         let obstacles = [];
         let burgers = [];
@@ -501,15 +573,46 @@
         let gamePaused = false;
         let animationId = null;
         
-        let speedMultiplier = 1.0;
-        const BASE_INCREMENT = 0.0012;
+        // Velocidad progresiva (empieza más lento)
+        let speedMultiplier = 0.5; // Empieza en 0.5x
+        const BASE_INCREMENT = 0.0015; // Sube más rápido
 
-        // Controles (soportan teclado y táctil)
+        // Controles
         let leftPressed = false;
         let rightPressed = false;
         let spacePressed = false;
 
-        // ========== EVENTOS DE TECLADO (DESKTOP) ==========
+        // ========== FUNCIÓN PARA ACTUALIZAR VIDAS ==========
+        function updateLives() {
+            life1.className = lives >= 1 ? 'heart' : 'heart empty';
+            life2.className = lives >= 2 ? 'heart' : 'heart empty';
+            life3.className = lives >= 3 ? 'heart' : 'heart empty';
+        }
+
+        // ========== FUNCIÓN PARA PERDER VIDA ==========
+        function loseLife() {
+            lives--;
+            updateLives();
+            
+            if (lives <= 0) {
+                gameActive = false;
+                gameOver = true;
+                gameOverElement.classList.add('show');
+                stopMusic();
+                cancelAnimationFrame(animationId);
+            } else {
+                // Reiniciar obstáculos pero mantener puntos y velocidad
+                obstacles = [];
+                burgers = [];
+                player.x = 350;
+                player.y = gravityDirection === 1 ? 380 : 50;
+                player.velocityY = 0;
+                player.invincible = true; // Breve invencibilidad después de perder vida
+                player.invincibleTime = 60; // 1 segundo
+            }
+        }
+
+        // ========== EVENTOS DE TECLADO ==========
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft') { 
                 leftPressed = true; 
@@ -521,6 +624,10 @@
             }
             else if (e.key === ' ') { 
                 spacePressed = true; 
+                e.preventDefault(); 
+            }
+            else if (e.key === 'r' || e.key === 'R') { 
+                restartGame(); 
                 e.preventDefault(); 
             }
         });
@@ -540,7 +647,7 @@
             }
         });
 
-        // ========== EVENTOS TÁCTILES (MÓVIL) ==========
+        // ========== EVENTOS TÁCTILES ==========
         function setupTouchControls() {
             const leftBtn = document.getElementById('touchLeft');
             const rightBtn = document.getElementById('touchRight');
@@ -572,20 +679,6 @@
                 if (direction === 'jump') spacePressed = false;
             };
 
-            // Limpiar eventos anteriores
-            leftBtn.removeEventListener('touchstart', handleTouchStart);
-            rightBtn.removeEventListener('touchstart', handleTouchStart);
-            jumpBtn.removeEventListener('touchstart', handleTouchStart);
-            
-            leftBtn.removeEventListener('touchend', handleTouchEnd);
-            rightBtn.removeEventListener('touchend', handleTouchEnd);
-            jumpBtn.removeEventListener('touchend', handleTouchEnd);
-            
-            leftBtn.removeEventListener('touchcancel', handleTouchEnd);
-            rightBtn.removeEventListener('touchcancel', handleTouchEnd);
-            jumpBtn.removeEventListener('touchcancel', handleTouchEnd);
-
-            // Asignar nuevos eventos
             leftBtn.addEventListener('touchstart', (e) => handleTouchStart(e, 'left'), { passive: false });
             leftBtn.addEventListener('touchend', (e) => handleTouchEnd(e, 'left'), { passive: false });
             leftBtn.addEventListener('touchcancel', (e) => handleTouchEnd(e, 'left'), { passive: false });
@@ -597,21 +690,6 @@
             jumpBtn.addEventListener('touchstart', (e) => handleTouchStart(e, 'jump'), { passive: false });
             jumpBtn.addEventListener('touchend', (e) => handleTouchEnd(e, 'jump'), { passive: false });
             jumpBtn.addEventListener('touchcancel', (e) => handleTouchEnd(e, 'jump'), { passive: false });
-
-            // También soporte para mouse (útil en desktop para probar)
-            if (window.innerWidth <= 768) {
-                leftBtn.addEventListener('mousedown', (e) => { e.preventDefault(); leftPressed = true; });
-                leftBtn.addEventListener('mouseup', (e) => { e.preventDefault(); leftPressed = false; });
-                leftBtn.addEventListener('mouseleave', (e) => { leftPressed = false; });
-
-                rightBtn.addEventListener('mousedown', (e) => { e.preventDefault(); rightPressed = true; });
-                rightBtn.addEventListener('mouseup', (e) => { e.preventDefault(); rightPressed = false; });
-                rightBtn.addEventListener('mouseleave', (e) => { rightPressed = false; });
-
-                jumpBtn.addEventListener('mousedown', (e) => { e.preventDefault(); spacePressed = true; });
-                jumpBtn.addEventListener('mouseup', (e) => { e.preventDefault(); spacePressed = false; });
-                jumpBtn.addEventListener('mouseleave', (e) => { spacePressed = false; });
-            }
         }
 
         // ========== FUNCIONES DE AUDIO ==========
@@ -815,8 +893,9 @@
 
         // ========== LÓGICA DEL JUEGO ==========
         function updateSpeed() {
-            speedMultiplier = 1.0 + (score * BASE_INCREMENT);
-            currentBPM = Math.min(220, 160 + (score * 0.15));
+            // Velocidad sube más rápido (incremento 0.0015)
+            speedMultiplier = 0.5 + (score * BASE_INCREMENT);
+            currentBPM = Math.min(200, 120 + (score * 0.2));
             bpmElement.textContent = Math.round(currentBPM);
             speedElement.textContent = speedMultiplier.toFixed(2) + 'x';
         }
@@ -872,7 +951,7 @@
         function updatePlayer() {
             if (!gameActive || gamePaused) return;
 
-            // Movimiento horizontal (funciona con teclado Y táctil)
+            // Movimiento horizontal
             if (leftPressed && player.x > 0) player.x -= 12;
             if (rightPressed && player.x + player.width < canvas.width) player.x += 12;
 
@@ -997,7 +1076,7 @@
                 ...type,
                 x: Math.random() * (canvas.width - type.width),
                 y: yStart,
-                speed: 3.5 + (speedMultiplier * 2.5) + Math.random() * 2,
+                speed: 2.5 + (speedMultiplier * 2.5) + Math.random() * 2,
                 passed: false,
                 direction: gravityDirection === 1 ? 1 : -1
             };
@@ -1010,7 +1089,7 @@
                 y: yStart,
                 width: 30,
                 height: 30,
-                speed: 3 + (speedMultiplier * 2.2),
+                speed: 2.5 + (speedMultiplier * 2.2),
                 collected: false,
                 direction: gravityDirection === 1 ? 1 : -1
             };
@@ -1019,7 +1098,7 @@
         function updateObstacles() {
             if (!gameActive || gamePaused) return;
 
-            const spawnRate = Math.max(15, 35 - Math.floor(speedMultiplier * 5));
+            const spawnRate = Math.max(15, 40 - Math.floor(speedMultiplier * 5));
             
             if (frameCount % spawnRate === 0) obstacles.push(createObstacle());
             if (frameCount % 100 === 0 && burgers.length < 1) burgers.push(createBurger());
@@ -1047,10 +1126,9 @@
                     player.y < obs.y + obs.height &&
                     player.y + player.height > obs.y) {
                     
-                    gameActive = false;
-                    gameOverElement.classList.add('show');
-                    stopMusic();
-                    cancelAnimationFrame(animationId);
+                    // PERDER UNA VIDA
+                    loseLife();
+                    obstacles.splice(i, 1);
                     return;
                 }
             }
@@ -1181,7 +1259,9 @@
             if (gameActive) animationId = requestAnimationFrame(gameLoop);
         }
 
-        function startGame() {
+        // ========== FUNCIÓN DE REINICIO ==========
+        function restartGame() {
+            // Reiniciar todas las variables
             obstacles = [];
             burgers = [];
             player.x = 350;
@@ -1193,23 +1273,31 @@
             player.burgerPower = false;
             player.grounded = true;
             player.onPlatform = false;
-            gravityDirection = 1;
-            nextGravityFlip = 1000;
-            lastFlipScore = 0;
-            speedMultiplier = 1.0;
-            currentBPM = 160;
+            player.velocityY = 0;
             
+            gravityDirection = 1;
+            lives = 3;
+            gameOver = false;
             frameCount = 0;
             score = 0;
+            speedMultiplier = 0.5;
+            currentBPM = 120;
+            nextGravityFlip = 1000;
+            lastFlipScore = 0;
+            
+            // Actualizar UI
             scoreElement.textContent = '0';
-            speedElement.textContent = '1.00x';
-            bpmElement.textContent = '160';
+            speedElement.textContent = '0.50x';
+            bpmElement.textContent = '120';
             powerFill.style.width = '0%';
             powerTimeElement.textContent = '0s';
-            gameActive = true;
-            gamePaused = false;
+            updateLives();
             gameOverElement.classList.remove('show');
             
+            gameActive = true;
+            gamePaused = false;
+            
+            // Reiniciar música
             beatCount = 0;
             nextNoteTime = 0;
             
@@ -1266,7 +1354,7 @@
         // Inicializar
         window.onload = () => {
             setupTouchControls();
-            startGame();
+            restartGame();
         };
     </script>
 </body>
