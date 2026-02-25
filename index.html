@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🍔 GRAVITY SURGE - CORREGIDO ⚡</title>
+    <title>🍔 GRAVITY FUN - ELECTRO PARTY ⚡</title>
     <style>
         * {
             margin: 0;
@@ -19,6 +19,7 @@
             align-items: center;
             min-height: 100vh;
             color: white;
+            overflow: hidden;
         }
 
         .game-container {
@@ -26,48 +27,65 @@
             background: rgba(0,0,0,0.95);
             padding: 20px;
             border-radius: 30px;
-            box-shadow: 0 0 100px #ff00ff;
-            border: 3px solid #00ffff;
+            box-shadow: 0 0 100px #ff00ff, 0 0 200px #00ffff;
+            border: 3px solid #ffff00;
+            animation: borderParty 0.5s infinite;
+        }
+
+        @keyframes borderParty {
+            0% { border-color: #ff00ff; box-shadow: 0 0 100px #00ffff; }
+            25% { border-color: #00ffff; box-shadow: 0 0 100px #ffff00; }
+            50% { border-color: #ffff00; box-shadow: 0 0 100px #ff00ff; }
+            75% { border-color: #ff0000; box-shadow: 0 0 100px #00ff00; }
+            100% { border-color: #ff00ff; box-shadow: 0 0 100px #00ffff; }
         }
 
         h1 {
             margin-bottom: 15px;
-            font-size: 2.2em;
-            background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00);
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #ff0000, #ff00ff, #00ffff, #ffff00);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            animation: rainbow 1s infinite;
+        }
+
+        @keyframes rainbow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
         }
 
         canvas {
-            border: 3px solid #00ffff;
+            border: 3px solid #ffff00;
             border-radius: 15px;
             background: linear-gradient(180deg, #0a0a2a 0%, #2a0a2a 100%);
             display: block;
             margin: 0 auto;
             box-shadow: 0 0 50px #ff00ff;
-            transition: transform 0.5s;
+            transition: transform 0.3s;
         }
 
         .stats-panel {
             margin-top: 15px;
             display: flex;
             justify-content: space-around;
-            background: rgba(0,255,255,0.1);
+            background: rgba(255,255,0,0.2);
             padding: 10px;
             border-radius: 50px;
-            border: 2px solid #00ffff;
+            border: 2px solid #ffff00;
+            backdrop-filter: blur(5px);
         }
 
         .stat {
-            font-size: 1.1em;
-            color: #ffff00;
+            font-size: 1.2em;
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff;
         }
 
         .stat span {
-            color: #00ffff;
+            color: #ffff00;
             font-weight: bold;
-            font-size: 1.6em;
-            text-shadow: 0 0 20px #00ffff;
+            font-size: 1.8em;
+            text-shadow: 0 0 20px #ffff00;
         }
 
         .power-bar-container {
@@ -75,11 +93,13 @@
             width: 100%;
             display: flex;
             justify-content: center;
+            align-items: center;
+            gap: 10px;
         }
 
         .power-bar {
-            width: 150px; /* Más pequeña */
-            height: 6px; /* Más fina */
+            width: 150px;
+            height: 8px;
             background: rgba(255,0,255,0.2);
             border-radius: 5px;
             overflow: hidden;
@@ -89,14 +109,27 @@
         .power-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #ffff00, #ffaa00);
+            background: linear-gradient(90deg, #ffff00, #ffaa00, #ff0000);
             transition: width 0.1s;
+            box-shadow: 0 0 15px #ffff00;
         }
 
-        .phase-indicator {
-            margin-top: 5px;
-            color: #ff00ff;
-            font-size: 1.2em;
+        .party-mode {
+            position: absolute;
+            color: #ffff00;
+            font-size: 2em;
+            font-weight: bold;
+            text-shadow: 0 0 30px #ffff00;
+            animation: partyFloat 0.5s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes partyFloat {
+            0% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(5deg); }
+            50% { transform: translateY(0) rotate(0deg); }
+            75% { transform: translateY(20px) rotate(-5deg); }
+            100% { transform: translateY(0) rotate(0deg); }
         }
 
         .controls {
@@ -107,21 +140,23 @@
         }
 
         button {
-            padding: 8px 20px;
-            font-size: 0.9em;
+            padding: 10px 25px;
+            font-size: 1em;
             background: transparent;
             color: white;
-            border: 2px solid #00ffff;
+            border: 2px solid #ffff00;
             border-radius: 50px;
             cursor: pointer;
             transition: 0.2s;
             font-weight: bold;
+            text-transform: uppercase;
         }
 
         button:hover {
-            background: #00ffff;
+            background: #ffff00;
             color: black;
-            box-shadow: 0 0 30px #00ffff;
+            box-shadow: 0 0 30px #ffff00;
+            transform: scale(1.1);
         }
 
         .music-control {
@@ -136,61 +171,97 @@
             width: 100px;
             height: 5px;
             -webkit-appearance: none;
-            background: linear-gradient(90deg, #00ffff, #ff00ff);
+            background: linear-gradient(90deg, #ffff00, #ff00ff, #00ffff);
             border-radius: 5px;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 15px;
+            height: 15px;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 15px #ffff00;
         }
 
         .game-over {
             color: #ff0000;
-            font-size: 2em;
+            font-size: 2.5em;
             display: none;
             text-shadow: 0 0 30px #ff0000;
             margin: 10px 0;
+            animation: gameOverParty 0.2s infinite;
+        }
+
+        @keyframes gameOverParty {
+            0% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.2) rotate(5deg); }
+            50% { transform: scale(1) rotate(-5deg); }
+            75% { transform: scale(1.2) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
         }
 
         .game-over.show {
             display: block;
         }
+
+        .instructions {
+            margin-top: 10px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.8em;
+        }
+
+        .flip-warning {
+            color: #ff00ff;
+            font-size: 1.5em;
+            animation: flipPulse 0.3s infinite;
+        }
+
+        @keyframes flipPulse {
+            0% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.5; transform: scale(1); }
+        }
     </style>
 </head>
 <body>
     <div class="game-container">
-        <h1>🍔 GRAVITY SURGE 🍔</h1>
+        <h1>🍔 ELECTRO PARTY RUN 🍔</h1>
         
         <canvas id="gameCanvas" width="700" height="450"></canvas>
         
         <div class="stats-panel">
             <div class="stat">PUNTOS <span id="score">0</span></div>
-            <div class="stat">FASE <span id="phase">NORMAL</span></div>
+            <div class="stat">🎵 BPM <span id="bpm">140</span></div>
             <div class="stat">⚡ <span id="speed">1.0x</span></div>
         </div>
 
         <div class="power-bar-container">
+            <span style="color: #ffff00;">🍔</span>
             <div class="power-bar">
                 <div class="power-fill" id="powerFill"></div>
             </div>
+            <span style="color: #ffff00;" id="powerTime">0s</span>
         </div>
-        <div id="powerTime" style="color: #ffff00; font-size: 0.8em; margin-top: 2px;">🍔 0s</div>
-
-        <div class="phase-indicator" id="phaseIndicator">⚡ FASE NORMAL ⚡</div>
 
         <div class="game-over" id="gameOver">
-            💀 GAME OVER 💀
+            💀 PARTY OVER 💀
         </div>
         
         <div class="controls">
-            <button onclick="startGame()">🔥 REINICIAR</button>
-            <button onclick="togglePause()">⏯️ PAUSA</button>
+            <button onclick="startGame()">🔥 FIESTA NUEVA</button>
+            <button onclick="togglePause()">⏸️ PAUSA</button>
         </div>
 
         <div class="music-control">
-            <button onclick="toggleMusic()" id="musicButton">🔊 AUDIO</button>
+            <button onclick="toggleMusic()" id="musicButton">🔊 ELECTRO</button>
             <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.1" value="0.5">
         </div>
         
         <div class="instructions">
-            <p>← → MOVER | ESPACIO SALTAR | 🟡 PLATAFORMA = INVINCIBLE</p>
-            <p>⚡ PLATAFORMA MÁS RÁPIDA | VELOCIDAD SIEMPRE SUBE | GRAVEDAD INVERSA</p>
+            <p>← → MOVER (MÁS RÁPIDO) | ESPACIO SALTAR | 🟡 BARRA = 3 SEG DE PODER</p>
+            <p>🎵 MÚSICA ELECTRÓNICA DIVERTIDA | ⚡ GRAVEDAD SE INVIERTE CADA 1000 PTS</p>
         </div>
     </div>
 
@@ -200,22 +271,29 @@
         const scoreElement = document.getElementById('score');
         const powerTimeElement = document.getElementById('powerTime');
         const speedElement = document.getElementById('speed');
+        const bpmElement = document.getElementById('bpm');
         const powerFill = document.getElementById('powerFill');
         const gameOverElement = document.getElementById('gameOver');
         const musicButton = document.getElementById('musicButton');
         const volumeSlider = document.getElementById('volumeSlider');
-        const phaseIndicator = document.getElementById('phaseIndicator');
-        const phaseSpan = document.getElementById('phase');
 
-        // ========== AUDIO ==========
+        // ========== AUDIO ELECTRÓNICO DIVERTIDO ==========
         let audioContext;
         let musicEnabled = true;
         let masterGain;
-        let kickGain, snareGain, hihatGain, bassGain, synthGain;
-        let currentBPM = 130;
+        let kickGain, snareGain, hihatGain, bassGain, leadGain, arpGain;
+        let currentBPM = 140;
         let beatCount = 0;
         let nextNoteTime = 0;
         let timerID;
+        
+        // Secuencias electrónicas alegres
+        const happyMelodies = {
+            bass: [36, 38, 43, 48, 43, 38, 36, 43, 48, 51, 55, 51, 48, 43, 48, 55],
+            lead: [60, 62, 64, 67, 72, 76, 79, 84, 79, 76, 72, 67, 64, 62, 60, 64],
+            arp: [48, 52, 55, 60, 64, 67, 72, 76, 79, 76, 72, 67, 64, 60, 55, 52],
+            chords: [48, 55, 60, 64, 55, 60, 67, 72, 60, 67, 72, 76, 67, 72, 79, 84]
+        };
 
         // ========== PERSONAJE ==========
         const player = {
@@ -229,36 +307,36 @@
             bigHeight: 55,
             velocityY: 0,
             gravity: 0.7,
-            jumpPower: -13,
+            jumpPower: -14,
             grounded: false,
             onPlatform: false,
             invincible: false,
             invincibleTime: 0,
-            maxInvincibleTime: 300,
+            maxInvincibleTime: 180, // 3 segundos (60fps * 3)
             trail: []
         };
 
-        // ========== PLATAFORMA MÁS RÁPIDA Y PEQUEÑA ==========
+        // ========== PLATAFORMA ==========
         const platform = {
             x: 250,
             y: 300,
-            width: 100, // Mitad de tamaño (antes 180)
+            width: 100,
             height: 15,
             visible: true,
             direction: 1,
-            speed: 3.0, // El doble de rápida (antes 1.5)
+            speed: 3.5, // Más rápida aún
             minX: 50,
-            maxX: 550, // Más rango de movimiento
+            maxX: 550,
             timer: 0,
-            maxTimer: 240, // 4 segundos
+            maxTimer: 240,
             state: 'moving'
         };
 
-        // ========== SISTEMA DE FASES ==========
-        let gamePhase = 1;
+        // ========== SISTEMA DE GRAVEDAD ==========
         let gravityDirection = 1;
         let nextGravityFlip = 1000;
         let lastFlipScore = 0;
+        let flipJustHappened = false;
 
         // ========== OBSTÁCULOS ==========
         let obstacles = [];
@@ -269,84 +347,16 @@
         let gamePaused = false;
         let animationId = null;
         
-        // Velocidad SIEMPRE CRECIENTE (nunca disminuye)
+        // Velocidad siempre creciente
         let speedMultiplier = 1.0;
-        const BASE_INCREMENT = 0.0008; // Incremento base por punto
-        
-        // Controles
+        const BASE_INCREMENT = 0.001;
+
+        // Controles (más rápidos)
         let leftPressed = false;
         let rightPressed = false;
         let spacePressed = false;
 
-        // ========== FUNCIONES DE AUDIO ==========
-        function createKickSample() {
-            const sampleRate = audioContext.sampleRate;
-            const duration = 0.2;
-            const buffer = audioContext.createBuffer(1, sampleRate * duration, sampleRate);
-            const data = buffer.getChannelData(0);
-            for (let i = 0; i < buffer.length; i++) {
-                const t = i / sampleRate;
-                data[i] = Math.sin(2 * Math.PI * 80 * Math.exp(-t * 10) * t * 100) * Math.exp(-t * 15);
-            }
-            return buffer;
-        }
-
-        function createSnareSample() {
-            const sampleRate = audioContext.sampleRate;
-            const duration = 0.15;
-            const buffer = audioContext.createBuffer(1, sampleRate * duration, sampleRate);
-            const data = buffer.getChannelData(0);
-            for (let i = 0; i < buffer.length; i++) {
-                const t = i / sampleRate;
-                const noise = Math.random() * 2 - 1;
-                const tone = Math.sin(2 * Math.PI * 180 * t) * Math.exp(-t * 20);
-                data[i] = (noise * 0.7 + tone * 0.3) * Math.exp(-t * 15);
-            }
-            return buffer;
-        }
-
-        function createHiHatSample() {
-            const sampleRate = audioContext.sampleRate;
-            const duration = 0.1;
-            const buffer = audioContext.createBuffer(1, sampleRate * duration, sampleRate);
-            const data = buffer.getChannelData(0);
-            for (let i = 0; i < buffer.length; i++) {
-                const t = i / sampleRate;
-                data[i] = (Math.random() * 2 - 1) * Math.exp(-t * 30) * Math.sin(2 * Math.PI * 8000 * t);
-            }
-            return buffer;
-        }
-
-        function createBassSample(freq) {
-            const sampleRate = audioContext.sampleRate;
-            const duration = 0.3;
-            const buffer = audioContext.createBuffer(1, sampleRate * duration, sampleRate);
-            const data = buffer.getChannelData(0);
-            for (let i = 0; i < buffer.length; i++) {
-                const t = i / sampleRate;
-                let wave = Math.sin(2 * Math.PI * freq * t);
-                wave = Math.tanh(wave * 1.5);
-                data[i] = wave * Math.exp(-t * 8);
-            }
-            return buffer;
-        }
-
-        function createSynthSample(freq) {
-            const sampleRate = audioContext.sampleRate;
-            const duration = 0.2;
-            const buffer = audioContext.createBuffer(1, sampleRate * duration, sampleRate);
-            const data = buffer.getChannelData(0);
-            for (let i = 0; i < buffer.length; i++) {
-                const t = i / sampleRate;
-                const vibrato = Math.sin(2 * Math.PI * 5 * t) * 0.03;
-                const wave = Math.sin(2 * Math.PI * freq * (1 + vibrato) * t);
-                data[i] = wave * Math.exp(-t * 10) * (0.5 + 0.5 * Math.sin(2 * Math.PI * 10 * t));
-            }
-            return buffer;
-        }
-
-        let kickBuffer, snareBuffer, hihatBuffer;
-
+        // ========== FUNCIONES DE AUDIO DIVERTIDAS ==========
         function initAudio() {
             try {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -357,20 +367,26 @@
                 snareGain = audioContext.createGain();
                 hihatGain = audioContext.createGain();
                 bassGain = audioContext.createGain();
-                synthGain = audioContext.createGain();
+                leadGain = audioContext.createGain();
+                arpGain = audioContext.createGain();
                 
                 kickGain.connect(masterGain);
                 snareGain.connect(masterGain);
                 hihatGain.connect(masterGain);
                 bassGain.connect(masterGain);
-                synthGain.connect(masterGain);
+                leadGain.connect(masterGain);
+                arpGain.connect(masterGain);
                 
                 masterGain.connect(audioContext.destination);
                 masterGain.gain.value = volumeSlider.value;
                 
-                kickBuffer = createKickSample();
-                snareBuffer = createSnareSample();
-                hihatBuffer = createHiHatSample();
+                // Volúmenes para música divertida
+                kickGain.gain.value = 0.5;
+                snareGain.gain.value = 0.4;
+                hihatGain.gain.value = 0.25;
+                bassGain.gain.value = 0.4;
+                leadGain.gain.value = 0.3;
+                arpGain.gain.value = 0.2;
                 
                 startMusic();
             } catch (e) {
@@ -378,63 +394,176 @@
             }
         }
 
-        function playSample(buffer, time, gainNode, volume = 1) {
-            if (!audioContext || !buffer) return;
-            const source = audioContext.createBufferSource();
-            source.buffer = buffer;
+        function playKick(time) {
+            const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
-            gain.gain.value = volume;
-            source.connect(gain);
-            gain.connect(gainNode);
-            source.start(time);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(100, time);
+            osc.frequency.exponentialRampToValueAtTime(50, time + 0.1);
+            gain.gain.setValueAtTime(0.5, time);
+            gain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
+            osc.connect(gain);
+            gain.connect(kickGain);
+            osc.start(time);
+            osc.stop(time + 0.1);
+        }
+
+        function playSnare(time) {
+            const osc1 = audioContext.createOscillator();
+            const osc2 = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            
+            osc1.type = 'triangle';
+            osc1.frequency.value = 200;
+            osc2.type = 'square';
+            osc2.frequency.value = 150;
+            
+            gain.gain.setValueAtTime(0.3, time);
+            gain.gain.exponentialRampToValueAtTime(0.01, time + 0.15);
+            
+            osc1.connect(gain);
+            osc2.connect(gain);
+            gain.connect(snareGain);
+            
+            osc1.start(time);
+            osc2.start(time);
+            osc1.stop(time + 0.15);
+            osc2.stop(time + 0.15);
+        }
+
+        function playHiHat(time) {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.type = 'square';
+            osc.frequency.value = 1200;
+            gain.gain.setValueAtTime(0.2, time);
+            gain.gain.exponentialRampToValueAtTime(0.01, time + 0.05);
+            osc.connect(gain);
+            gain.connect(hihatGain);
+            osc.start(time);
+            osc.stop(time + 0.05);
+        }
+
+        function playBassNote(time, duration, note) {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.value = 440 * Math.pow(2, (note - 69) / 12);
+            
+            // Envolvente divertida
+            gain.gain.setValueAtTime(0, time);
+            gain.gain.linearRampToValueAtTime(0.4, time + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.01, time + duration * 0.8);
+            
+            osc.connect(gain);
+            gain.connect(bassGain);
+            osc.start(time);
+            osc.stop(time + duration * 0.8);
+        }
+
+        function playLeadNote(time, duration, note) {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.type = 'square';
+            osc.frequency.value = 440 * Math.pow(2, (note - 69) / 12);
+            
+            // Vibrato divertido
+            const lfo = audioContext.createOscillator();
+            const lfoGain = audioContext.createGain();
+            lfo.frequency.value = 8;
+            lfoGain.gain.value = 5;
+            lfo.connect(lfoGain);
+            lfoGain.connect(osc.frequency);
+            lfo.start(time);
+            lfo.stop(time + duration);
+            
+            gain.gain.setValueAtTime(0, time);
+            gain.gain.linearRampToValueAtTime(0.25, time + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.01, time + duration);
+            
+            osc.connect(gain);
+            gain.connect(leadGain);
+            osc.start(time);
+            osc.stop(time + duration);
+        }
+
+        function playArpeggio(time, duration, notes) {
+            const noteDuration = duration / 8;
+            for (let i = 0; i < 8; i++) {
+                const noteTime = time + (i * noteDuration);
+                const note = notes[(beatCount + i) % notes.length] + 24;
+                
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                
+                osc.type = 'triangle';
+                osc.frequency.value = 440 * Math.pow(2, (note - 69) / 12);
+                
+                gain.gain.setValueAtTime(0, noteTime);
+                gain.gain.linearRampToValueAtTime(0.15, noteTime + 0.005);
+                gain.gain.exponentialRampToValueAtTime(0.01, noteTime + noteDuration * 0.8);
+                
+                osc.connect(gain);
+                gain.connect(arpGain);
+                
+                osc.start(noteTime);
+                osc.stop(noteTime + noteDuration * 0.8);
+            }
         }
 
         function startMusic() {
             if (!audioContext || !musicEnabled || !gameActive || gamePaused) return;
             stopMusic();
             nextNoteTime = audioContext.currentTime;
-            scheduleBeats();
+            schedulePartyBeats();
         }
 
         function stopMusic() {
             if (timerID) clearTimeout(timerID);
         }
 
-        function scheduleBeats() {
+        function schedulePartyBeats() {
             if (!audioContext || !musicEnabled || !gameActive || gamePaused) return;
 
             const now = audioContext.currentTime;
+            const phase = Math.floor(score / 1000) + 1;
             
             while (nextNoteTime < now + 0.1) {
                 const beatDuration = 60 / currentBPM;
                 
-                if (beatCount % 4 === 0) playSample(kickBuffer, nextNoteTime, kickGain, 0.5);
-                if (beatCount % 4 === 2) playSample(snareBuffer, nextNoteTime, snareGain, 0.4);
-                playSample(hihatBuffer, nextNoteTime, hihatGain, 0.2);
+                // Ritmo base de fiesta
+                if (beatCount % 4 === 0) playKick(nextNoteTime);
+                if (beatCount % 4 === 2) playSnare(nextNoteTime);
+                if (beatCount % 2 === 0) playHiHat(nextNoteTime);
                 
+                // Bajo saltarín
                 if (beatCount % 2 === 0) {
-                    const bassFreq = [55, 55, 62, 62, 65, 65, 69, 69][beatCount % 8];
-                    const bassBuf = createBassSample(bassFreq);
-                    playSample(bassBuf, nextNoteTime, bassGain, 0.35);
+                    const bassNote = happyMelodies.bass[beatCount % happyMelodies.bass.length];
+                    playBassNote(nextNoteTime, beatDuration * 2, bassNote);
                 }
                 
-                if (gamePhase >= 2 && beatCount % 4 === 0) {
-                    const synthFreq = [330, 349, 392, 440, 494, 523][beatCount % 6];
-                    const synthBuf = createSynthSample(synthFreq);
-                    playSample(synthBuf, nextNoteTime, synthGain, 0.25);
+                // Melodía principal (más frecuente)
+                if (beatCount % 2 === 0) {
+                    const leadNote = happyMelodies.lead[beatCount % happyMelodies.lead.length];
+                    playLeadNote(nextNoteTime, beatDuration * 1.5, leadNote + (phase * 2));
                 }
                 
-                if (gamePhase >= 3 && beatCount % 2 === 0) {
-                    const synthFreq = [523, 587, 659, 698][beatCount % 4];
-                    const synthBuf = createSynthSample(synthFreq * 2);
-                    playSample(synthBuf, nextNoteTime, synthGain, 0.2);
+                // Arpegios rápidos (muy electrónicos)
+                if (beatCount % 4 === 0) {
+                    playArpeggio(nextNoteTime, beatDuration * 2, happyMelodies.arp);
+                }
+                
+                // Notas extra cuando hay power-up
+                if (player.invincible && beatCount % 2 === 0) {
+                    const extraNote = happyMelodies.chords[beatCount % happyMelodies.chords.length];
+                    playLeadNote(nextNoteTime, beatDuration, extraNote + 24);
                 }
                 
                 nextNoteTime += beatDuration;
                 beatCount++;
             }
             
-            timerID = setTimeout(scheduleBeats, 25);
+            timerID = setTimeout(schedulePartyBeats, 25);
         }
 
         // ========== LÓGICA DEL JUEGO ==========
@@ -450,26 +579,10 @@
             else if (e.key === ' ') { spacePressed = false; e.preventDefault(); }
         });
 
-        function updatePhase() {
-            const newPhase = score < 1000 ? 1 : score < 2000 ? 2 : 3;
-            
-            if (newPhase !== gamePhase) {
-                gamePhase = newPhase;
-                phaseSpan.textContent = ['NORMAL', 'SURGE', 'HYPER'][gamePhase-1];
-                phaseIndicator.innerHTML = gamePhase === 1 ? '⚡ FASE NORMAL ⚡' : 
-                                          gamePhase === 2 ? '🔥 FASE SURGE 🔥' : 
-                                          '💀 FASE HYPER 💀';
-            }
-            
-            // Actualizar BPM según fase
-            currentBPM = [130, 160, 190][gamePhase-1];
-        }
-
         function updateSpeed() {
-            // La velocidad SIEMPRE sube, NUNCA baja
-            // Se multiplica por la fase para que sea más rápido en fases altas
-            const phaseMultiplier = [1.0, 1.5, 2.0][gamePhase-1];
-            speedMultiplier = Math.max(speedMultiplier, 1.0 + (score * BASE_INCREMENT * phaseMultiplier));
+            speedMultiplier = 1.0 + (score * BASE_INCREMENT);
+            currentBPM = Math.min(200, 140 + (score * 0.1));
+            bpmElement.textContent = Math.round(currentBPM);
             speedElement.textContent = speedMultiplier.toFixed(2) + 'x';
         }
 
@@ -479,30 +592,40 @@
                 lastFlipScore = score;
                 nextGravityFlip = score + 1000;
                 
+                // Reposicionar al personaje según la gravedad
                 if (gravityDirection === -1) {
-                    // En modo inverso, el personaje aparece ARRIBA
-                    player.y = 50; // Posición arriba
-                    canvas.style.transform = 'rotate(180deg)';
+                    player.y = 50; // ARRIBA en modo inverso
                 } else {
-                    player.y = 380; // Vuelve al suelo
-                    canvas.style.transform = 'rotate(0deg)';
+                    player.y = 380; // ABAJO en modo normal
                 }
                 
-                // Limpiar obstáculos al cambiar gravedad
+                // Crear efecto de partículas
+                for (let i = 0; i < 20; i++) {
+                    createPartyEffect();
+                }
+                
                 obstacles = [];
+                flipJustHappened = true;
+                setTimeout(() => flipJustHappened = false, 1000);
             }
         }
 
+        function createPartyEffect() {
+            const effect = document.createElement('div');
+            effect.className = 'party-mode';
+            effect.textContent = ['⚡','🎵','💫','✨','🎸'][Math.floor(Math.random() * 5)];
+            effect.style.left = Math.random() * window.innerWidth + 'px';
+            effect.style.top = Math.random() * window.innerHeight + 'px';
+            document.body.appendChild(effect);
+            setTimeout(() => effect.remove(), 1000);
+        }
+
         function updatePlatform() {
-            // Plataforma más rápida
             if (platform.state === 'moving') {
                 platform.x += platform.direction * platform.speed * speedMultiplier;
                 
-                if (platform.x <= platform.minX) {
-                    platform.direction = 1;
-                } else if (platform.x >= platform.maxX) {
-                    platform.direction = -1;
-                }
+                if (platform.x <= platform.minX) platform.direction = 1;
+                else if (platform.x >= platform.maxX) platform.direction = -1;
                 
                 platform.timer++;
                 if (platform.timer >= platform.maxTimer) {
@@ -532,9 +655,9 @@
         function updatePlayer() {
             if (!gameActive || gamePaused) return;
 
-            // Movimiento horizontal
-            if (leftPressed && player.x > 0) player.x -= 5;
-            if (rightPressed && player.x + player.width < canvas.width) player.x += 5;
+            // Movimiento horizontal MÁS RÁPIDO
+            if (leftPressed && player.x > 0) player.x -= 7; // Antes 5
+            if (rightPressed && player.x + player.width < canvas.width) player.x += 7; // Antes 5
 
             // Salto
             if (spacePressed && (player.grounded || player.onPlatform)) {
@@ -543,7 +666,7 @@
                 player.onPlatform = false;
             }
 
-            // Gravedad (afectada por dirección)
+            // Gravedad
             player.velocityY += player.gravity * gravityDirection;
             player.y += player.velocityY;
 
@@ -559,8 +682,8 @@
                     player.y = 0;
                     player.velocityY = 0;
                 }
-            } else { // Invertida
-                if (player.y < 50) { // Límite superior
+            } else { // Invertida - AHORA FUNCIONA CORRECTAMENTE
+                if (player.y < 50) { // Límite SUPERIOR cuando está invertido
                     player.y = 50;
                     player.velocityY = 0;
                     player.grounded = true;
@@ -572,7 +695,7 @@
                 }
             }
 
-            // Colisión con plataforma
+            // Colisión con plataforma (adaptada para gravedad inversa)
             if (platform.visible) {
                 if (gravityDirection === 1) { // Modo normal
                     if (player.velocityY >= 0 &&
@@ -586,15 +709,13 @@
                         player.onPlatform = true;
                         player.grounded = false;
                         
-                        // Activar invencibilidad SOLO si no está invencible ya
-                        if (!player.invincible) {
-                            player.invincible = true;
-                            player.invincibleTime = player.maxInvincibleTime;
-                            player.width = player.bigWidth;
-                            player.height = player.bigHeight;
-                        }
+                        // Activar invencibilidad
+                        player.invincible = true;
+                        player.invincibleTime = player.maxInvincibleTime;
+                        player.width = player.bigWidth;
+                        player.height = player.bigHeight;
                     }
-                } else { // Modo invertido
+                } else { // Modo invertido - CORREGIDO
                     if (player.velocityY <= 0 &&
                         player.x + player.width > platform.x &&
                         player.x < platform.x + platform.width &&
@@ -606,13 +727,11 @@
                         player.onPlatform = true;
                         player.grounded = false;
                         
-                        // Activar invencibilidad SOLO si no está invencible ya
-                        if (!player.invincible) {
-                            player.invincible = true;
-                            player.invincibleTime = player.maxInvincibleTime;
-                            player.width = player.bigWidth;
-                            player.height = player.bigHeight;
-                        }
+                        // Activar invencibilidad
+                        player.invincible = true;
+                        player.invincibleTime = player.maxInvincibleTime;
+                        player.width = player.bigWidth;
+                        player.height = player.bigHeight;
                     }
                 }
             }
@@ -625,11 +744,10 @@
                 player.height = player.bigHeight;
             }
 
-            // Si no está en plataforma Y no tiene power-up, disminuir tiempo
-            if (!player.onPlatform && player.invincible && player.invincibleTime > 0) {
+            // Si no está en plataforma, disminuir tiempo de invencibilidad
+            if (!player.onPlatform && player.invincible) {
                 player.invincibleTime--;
                 
-                // Cuando se acaba el tiempo, volver a tamaño normal
                 if (player.invincibleTime <= 0) {
                     player.invincible = false;
                     player.width = player.normalWidth;
@@ -645,10 +763,10 @@
             if (player.invincible) {
                 const percent = (player.invincibleTime / player.maxInvincibleTime) * 100;
                 powerFill.style.width = percent + '%';
-                powerTimeElement.textContent = '🍔 ' + Math.ceil(player.invincibleTime / 60) + 's';
+                powerTimeElement.textContent = Math.ceil(player.invincibleTime / 60) + 's';
             } else {
                 powerFill.style.width = '0%';
-                powerTimeElement.textContent = '🍔 0s';
+                powerTimeElement.textContent = '0s';
             }
         }
 
@@ -662,35 +780,29 @@
             
             let yStart;
             if (gravityDirection === 1) {
-                yStart = -type.height; // Vienen desde arriba
+                yStart = -type.height;
             } else {
-                yStart = canvas.height + type.height; // Vienen desde abajo
+                yStart = canvas.height + type.height;
             }
             
             return {
                 ...type,
                 x: Math.random() * (canvas.width - type.width),
                 y: yStart,
-                speed: 2.5 + (speedMultiplier * 2) + Math.random() * 2,
+                speed: 3 + (speedMultiplier * 2) + Math.random() * 2,
                 passed: false,
                 direction: gravityDirection === 1 ? 1 : -1
             };
         }
 
         function createBurger() {
-            let yStart;
-            if (gravityDirection === 1) {
-                yStart = -30;
-            } else {
-                yStart = canvas.height + 30;
-            }
-            
+            let yStart = gravityDirection === 1 ? -30 : canvas.height + 30;
             return {
                 x: Math.random() * (canvas.width - 30),
                 y: yStart,
                 width: 30,
                 height: 30,
-                speed: 2 + (speedMultiplier * 1.8),
+                speed: 2.5 + (speedMultiplier * 2),
                 collected: false,
                 direction: gravityDirection === 1 ? 1 : -1
             };
@@ -699,41 +811,28 @@
         function updateObstacles() {
             if (!gameActive || gamePaused) return;
 
-            // Spawn rate basado en velocidad
             const spawnRate = Math.max(18, 40 - Math.floor(speedMultiplier * 4));
             
-            if (frameCount % spawnRate === 0) {
-                obstacles.push(createObstacle());
-            }
+            if (frameCount % spawnRate === 0) obstacles.push(createObstacle());
+            if (frameCount % 120 === 0 && burgers.length < 1) burgers.push(createBurger());
 
-            if (frameCount % 150 === 0 && burgers.length < 1) {
-                burgers.push(createBurger());
-            }
-
-            // Obstáculos
             for (let i = obstacles.length - 1; i >= 0; i--) {
                 const obs = obstacles[i];
                 obs.y += obs.speed * speedMultiplier * obs.direction;
 
-                // Puntos por esquivar
                 if (!obs.passed) {
                     if ((gravityDirection === 1 && obs.y > canvas.height) ||
                         (gravityDirection === -1 && obs.y < -obs.height)) {
                         obs.passed = true;
                         score += Math.floor(obs.points * speedMultiplier);
                         scoreElement.textContent = score;
-                        updatePhase();
-                        updateSpeed(); // La velocidad SIEMPRE sube
+                        updateSpeed();
                         checkGravityFlip();
                     }
                 }
 
-                // Eliminar obstáculos fuera de pantalla
-                if (obs.y > canvas.height + 100 || obs.y < -100) {
-                    obstacles.splice(i, 1);
-                }
+                if (obs.y > canvas.height + 100 || obs.y < -100) obstacles.splice(i, 1);
 
-                // Colisión (solo si no es invencible)
                 if (!player.invincible && !obs.passed &&
                     player.x < obs.x + obs.width &&
                     player.x + player.width > obs.x &&
@@ -748,12 +847,10 @@
                 }
             }
 
-            // Hamburguesas
             for (let i = burgers.length - 1; i >= 0; i--) {
                 const burger = burgers[i];
                 burger.y += burger.speed * speedMultiplier * burger.direction;
 
-                // Colisión con hamburguesa
                 if (!burger.collected &&
                     player.x < burger.x + burger.width &&
                     player.x + player.width > burger.x &&
@@ -762,7 +859,6 @@
                     
                     burger.collected = true;
                     
-                    // Activar invencibilidad (solo si no está en plataforma)
                     if (!player.onPlatform) {
                         player.invincible = true;
                         player.invincibleTime = player.maxInvincibleTime;
@@ -772,15 +868,13 @@
                     
                     score += 50;
                     scoreElement.textContent = score;
-                    updatePhase();
                     updateSpeed();
                     checkGravityFlip();
+                    
+                    createPartyEffect();
                 }
 
-                // Eliminar hamburguesas
-                if (burger.y > canvas.height + 100 || burger.y < -100) {
-                    burgers.splice(i, 1);
-                }
+                if (burger.y > canvas.height + 100 || burger.y < -100) burgers.splice(i, 1);
             }
 
             frameCount++;
@@ -789,23 +883,25 @@
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Fondo por fase
-            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            if (gamePhase === 1) {
-                gradient.addColorStop(0, '#0a0a2a');
-                gradient.addColorStop(1, '#2a0a2a');
-            } else if (gamePhase === 2) {
-                gradient.addColorStop(0, '#2a0a2a');
-                gradient.addColorStop(1, '#4a0a2a');
-            } else {
-                gradient.addColorStop(0, '#4a0a2a');
-                gradient.addColorStop(1, '#6a0a2a');
-            }
+            // Fondo divertido
+            const time = Date.now() / 200;
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, `hsl(${200 + Math.sin(time) * 30}, 70%, 10%)`);
+            gradient.addColorStop(1, `hsl(${300 + Math.cos(time) * 30}, 70%, 15%)`);
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Suelo (cambia según gravedad)
-            ctx.shadowBlur = 20;
+            // Líneas de ritmo
+            ctx.strokeStyle = `rgba(255, 255, 0, ${0.1 + Math.sin(beatCount * 0.5) * 0.05})`;
+            for (let i = 0; i < canvas.width; i += 40) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, canvas.height);
+                ctx.stroke();
+            }
+
+            // Suelo
+            ctx.shadowBlur = 30;
             if (gravityDirection === 1) {
                 ctx.fillStyle = '#00ffff';
                 ctx.shadowColor = '#00ffff';
@@ -816,21 +912,26 @@
                 ctx.fillRect(0, 40, canvas.width, 5);
             }
 
-            // Plataforma (más pequeña)
+            // Plataforma
             if (platform.visible) {
                 ctx.shadowColor = '#ffff00';
                 ctx.shadowBlur = 30;
                 ctx.fillStyle = '#ffaa00';
                 ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+                
+                ctx.shadowBlur = 20;
+                ctx.font = 'bold 10px Arial';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText('⚡ 3s ⚡', platform.x + 25, platform.y - 5);
             }
 
-            // Trail del jugador
+            // Trail
             player.trail.forEach((pos, i) => {
                 const alpha = (i / player.trail.length) * 0.3;
                 ctx.fillStyle = player.invincible ? `rgba(255, 255, 0, ${alpha})` : `rgba(0, 255, 255, ${alpha})`;
                 ctx.shadowBlur = 20;
                 ctx.beginPath();
-                ctx.arc(pos.x, pos.y, 12, 0, Math.PI * 2);
+                ctx.arc(pos.x, pos.y, 15, 0, Math.PI * 2);
                 ctx.fill();
             });
 
@@ -870,18 +971,20 @@
                 ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
             });
 
-            // Información
-            ctx.shadowBlur = 0;
-            ctx.font = 'bold 14px Arial';
-            ctx.fillStyle = '#00ffff';
-            ctx.fillText(`🔄 ${nextGravityFlip - score} pts`, 10, 30);
-            ctx.fillStyle = '#ff00ff';
-            ctx.fillText(`📊 FASE ${gamePhase}`, 600, 30);
-            
-            // Indicador de posición (arriba/abajo)
+            // Indicadores
             if (gravityDirection === -1) {
+                ctx.shadowBlur = 0;
+                ctx.font = 'bold 24px Arial';
                 ctx.fillStyle = '#ff00ff';
-                ctx.fillText('⬆️ MODO INVERSO ⬆️', 280, 70);
+                ctx.fillText('⬆️ MODO LOCO ⬆️', 200, 100);
+            }
+            
+            if (flipJustHappened) {
+                ctx.font = 'bold 36px Arial';
+                ctx.fillStyle = '#ffff00';
+                ctx.shadowBlur = 50;
+                ctx.shadowColor = '#ff00ff';
+                ctx.fillText('¡GRAVEDAD LOCO!', 150, 200);
             }
         }
 
@@ -904,24 +1007,21 @@
             player.height = player.normalHeight;
             player.invincible = false;
             player.invincibleTime = 0;
-            player.velocityY = 0;
             player.grounded = true;
             player.onPlatform = false;
-            gamePhase = 1;
             gravityDirection = 1;
             nextGravityFlip = 1000;
             lastFlipScore = 0;
             speedMultiplier = 1.0;
-            canvas.style.transform = 'rotate(0deg)';
+            currentBPM = 140;
             
             frameCount = 0;
             score = 0;
             scoreElement.textContent = '0';
             speedElement.textContent = '1.00x';
-            phaseSpan.textContent = 'NORMAL';
-            phaseIndicator.innerHTML = '⚡ FASE NORMAL ⚡';
+            bpmElement.textContent = '140';
             powerFill.style.width = '0%';
-            powerTimeElement.textContent = '🍔 0s';
+            powerTimeElement.textContent = '0s';
             gameActive = true;
             gamePaused = false;
             gameOverElement.classList.remove('show');
@@ -937,11 +1037,7 @@
         function togglePause() {
             if (gameActive) {
                 gamePaused = !gamePaused;
-                if (gamePaused) {
-                    stopMusic();
-                } else {
-                    startMusic();
-                }
+                gamePaused ? stopMusic() : startMusic();
             }
         }
 
@@ -951,17 +1047,17 @@
                 if (audioContext.state === 'suspended') {
                     audioContext.resume();
                     musicEnabled = true;
-                    musicButton.textContent = '🔊 AUDIO';
+                    musicButton.textContent = '🔊 ELECTRO';
                     startMusic();
                 } else if (musicEnabled) {
                     audioContext.suspend();
                     musicEnabled = false;
-                    musicButton.textContent = '🔈 AUDIO';
+                    musicButton.textContent = '🔈 ELECTRO';
                     stopMusic();
                 } else {
                     audioContext.resume();
                     musicEnabled = true;
-                    musicButton.textContent = '🔊 AUDIO';
+                    musicButton.textContent = '🔊 ELECTRO';
                     startMusic();
                 }
             }
