@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🍔 GRAVITY FUN - ELECTRO PARTY ⚡</title>
+    <title>🍔 GRAVITY PARTY - LA LOQUETA ⚡</title>
     <style>
         * {
             margin: 0;
@@ -27,17 +27,8 @@
             background: rgba(0,0,0,0.95);
             padding: 20px;
             border-radius: 30px;
-            box-shadow: 0 0 100px #ff00ff, 0 0 200px #00ffff;
+            box-shadow: 0 0 100px #ff00ff;
             border: 3px solid #ffff00;
-            animation: borderParty 0.5s infinite;
-        }
-
-        @keyframes borderParty {
-            0% { border-color: #ff00ff; box-shadow: 0 0 100px #00ffff; }
-            25% { border-color: #00ffff; box-shadow: 0 0 100px #ffff00; }
-            50% { border-color: #ffff00; box-shadow: 0 0 100px #ff00ff; }
-            75% { border-color: #ff0000; box-shadow: 0 0 100px #00ff00; }
-            100% { border-color: #ff00ff; box-shadow: 0 0 100px #00ffff; }
         }
 
         h1 {
@@ -46,7 +37,7 @@
             background: linear-gradient(45deg, #ff0000, #ff00ff, #00ffff, #ffff00);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: rainbow 1s infinite;
+            animation: rainbow 0.5s infinite;
         }
 
         @keyframes rainbow {
@@ -72,13 +63,11 @@
             padding: 10px;
             border-radius: 50px;
             border: 2px solid #ffff00;
-            backdrop-filter: blur(5px);
         }
 
         .stat {
             font-size: 1.2em;
             color: #00ffff;
-            text-shadow: 0 0 10px #00ffff;
         }
 
         .stat span {
@@ -90,7 +79,6 @@
 
         .power-bar-container {
             margin-top: 10px;
-            width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -111,25 +99,6 @@
             width: 0%;
             background: linear-gradient(90deg, #ffff00, #ffaa00, #ff0000);
             transition: width 0.1s;
-            box-shadow: 0 0 15px #ffff00;
-        }
-
-        .party-mode {
-            position: absolute;
-            color: #ffff00;
-            font-size: 2em;
-            font-weight: bold;
-            text-shadow: 0 0 30px #ffff00;
-            animation: partyFloat 0.5s infinite;
-            pointer-events: none;
-        }
-
-        @keyframes partyFloat {
-            0% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-20px) rotate(5deg); }
-            50% { transform: translateY(0) rotate(0deg); }
-            75% { transform: translateY(20px) rotate(-5deg); }
-            100% { transform: translateY(0) rotate(0deg); }
         }
 
         .controls {
@@ -149,14 +118,12 @@
             cursor: pointer;
             transition: 0.2s;
             font-weight: bold;
-            text-transform: uppercase;
         }
 
         button:hover {
             background: #ffff00;
             color: black;
             box-shadow: 0 0 30px #ffff00;
-            transform: scale(1.1);
         }
 
         .music-control {
@@ -170,19 +137,8 @@
         .volume-slider {
             width: 100px;
             height: 5px;
-            -webkit-appearance: none;
-            background: linear-gradient(90deg, #ffff00, #ff00ff, #00ffff);
+            background: linear-gradient(90deg, #ffff00, #ff00ff);
             border-radius: 5px;
-        }
-
-        .volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 15px;
-            height: 15px;
-            background: white;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 0 15px #ffff00;
         }
 
         .game-over {
@@ -191,49 +147,34 @@
             display: none;
             text-shadow: 0 0 30px #ff0000;
             margin: 10px 0;
-            animation: gameOverParty 0.2s infinite;
-        }
-
-        @keyframes gameOverParty {
-            0% { transform: scale(1) rotate(0deg); }
-            25% { transform: scale(1.2) rotate(5deg); }
-            50% { transform: scale(1) rotate(-5deg); }
-            75% { transform: scale(1.2) rotate(5deg); }
-            100% { transform: scale(1) rotate(0deg); }
         }
 
         .game-over.show {
             display: block;
         }
 
-        .instructions {
-            margin-top: 10px;
-            color: rgba(255,255,255,0.7);
-            font-size: 0.8em;
-        }
-
         .flip-warning {
             color: #ff00ff;
             font-size: 1.5em;
-            animation: flipPulse 0.3s infinite;
+            animation: flipPulse 0.2s infinite;
         }
 
         @keyframes flipPulse {
             0% { opacity: 0.5; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
+            50% { opacity: 1; transform: scale(1.3); }
             100% { opacity: 0.5; transform: scale(1); }
         }
     </style>
 </head>
 <body>
     <div class="game-container">
-        <h1>🍔 ELECTRO PARTY RUN 🍔</h1>
+        <h1>🍔 GRAVITY PARTY 🍔</h1>
         
         <canvas id="gameCanvas" width="700" height="450"></canvas>
         
         <div class="stats-panel">
             <div class="stat">PUNTOS <span id="score">0</span></div>
-            <div class="stat">🎵 BPM <span id="bpm">140</span></div>
+            <div class="stat">🎵 BPM <span id="bpm">160</span></div>
             <div class="stat">⚡ <span id="speed">1.0x</span></div>
         </div>
 
@@ -246,22 +187,22 @@
         </div>
 
         <div class="game-over" id="gameOver">
-            💀 PARTY OVER 💀
+            💀 GAME OVER 💀
         </div>
         
         <div class="controls">
-            <button onclick="startGame()">🔥 FIESTA NUEVA</button>
+            <button onclick="startGame()">🔥 NUEVA PARTIDA</button>
             <button onclick="togglePause()">⏸️ PAUSA</button>
         </div>
 
         <div class="music-control">
-            <button onclick="toggleMusic()" id="musicButton">🔊 ELECTRO</button>
+            <button onclick="toggleMusic()" id="musicButton">🔊 MEGA ELECTRO</button>
             <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.1" value="0.5">
         </div>
         
         <div class="instructions">
-            <p>← → MOVER (MÁS RÁPIDO) | ESPACIO SALTAR | 🟡 BARRA = 3 SEG DE PODER</p>
-            <p>🎵 MÚSICA ELECTRÓNICA DIVERTIDA | ⚡ GRAVEDAD SE INVIERTE CADA 1000 PTS</p>
+            <p>← → MOVER | ESPACIO SALTAR | 🟡 BARRA = 3 SEG DE PODER MIENTRAS ESTÁS</p>
+            <p>⚡ GRAVEDAD SE INVIERTE CADA 1000 PTS | 🍔 HAMBURGUESA = 3 SEG EXTRA</p>
         </div>
     </div>
 
@@ -277,22 +218,22 @@
         const musicButton = document.getElementById('musicButton');
         const volumeSlider = document.getElementById('volumeSlider');
 
-        // ========== AUDIO ELECTRÓNICO DIVERTIDO ==========
+        // ========== AUDIO MEGA ACTIVO ==========
         let audioContext;
         let musicEnabled = true;
         let masterGain;
         let kickGain, snareGain, hihatGain, bassGain, leadGain, arpGain;
-        let currentBPM = 140;
+        let currentBPM = 160; // Más rápido
         let beatCount = 0;
         let nextNoteTime = 0;
         let timerID;
-        
-        // Secuencias electrónicas alegres
-        const happyMelodies = {
-            bass: [36, 38, 43, 48, 43, 38, 36, 43, 48, 51, 55, 51, 48, 43, 48, 55],
-            lead: [60, 62, 64, 67, 72, 76, 79, 84, 79, 76, 72, 67, 64, 62, 60, 64],
-            arp: [48, 52, 55, 60, 64, 67, 72, 76, 79, 76, 72, 67, 64, 60, 55, 52],
-            chords: [48, 55, 60, 64, 55, 60, 67, 72, 60, 67, 72, 76, 67, 72, 79, 84]
+
+        // Secuencias MUY activas
+        const hyperMelodies = {
+            bass: [36, 38, 43, 48, 51, 55, 58, 60, 58, 55, 51, 48, 43, 38, 36, 43],
+            lead: [60, 64, 67, 72, 76, 79, 84, 88, 91, 88, 84, 79, 76, 72, 67, 64],
+            arp: [48, 55, 60, 67, 72, 79, 84, 88, 84, 79, 72, 67, 60, 55, 48, 60],
+            fastArp: [60, 64, 67, 72, 76, 79, 84, 88, 84, 79, 76, 72, 67, 64, 60, 72]
         };
 
         // ========== PERSONAJE ==========
@@ -306,13 +247,14 @@
             bigWidth: 40,
             bigHeight: 55,
             velocityY: 0,
-            gravity: 0.7,
-            jumpPower: -14,
+            gravity: 0.8,
+            jumpPower: -15,
             grounded: false,
             onPlatform: false,
             invincible: false,
             invincibleTime: 0,
-            maxInvincibleTime: 180, // 3 segundos (60fps * 3)
+            maxInvincibleTime: 180, // 3 segundos
+            burgerPower: false, // Si viene de hamburguesa
             trail: []
         };
 
@@ -324,7 +266,7 @@
             height: 15,
             visible: true,
             direction: 1,
-            speed: 3.5, // Más rápida aún
+            speed: 4.0, // Más rápida
             minX: 50,
             maxX: 550,
             timer: 0,
@@ -336,7 +278,6 @@
         let gravityDirection = 1;
         let nextGravityFlip = 1000;
         let lastFlipScore = 0;
-        let flipJustHappened = false;
 
         // ========== OBSTÁCULOS ==========
         let obstacles = [];
@@ -347,16 +288,15 @@
         let gamePaused = false;
         let animationId = null;
         
-        // Velocidad siempre creciente
         let speedMultiplier = 1.0;
-        const BASE_INCREMENT = 0.001;
+        const BASE_INCREMENT = 0.0012;
 
-        // Controles (más rápidos)
+        // Controles
         let leftPressed = false;
         let rightPressed = false;
         let spacePressed = false;
 
-        // ========== FUNCIONES DE AUDIO DIVERTIDAS ==========
+        // ========== FUNCIONES DE AUDIO HIPERACTIVAS ==========
         function initAudio() {
             try {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -380,13 +320,12 @@
                 masterGain.connect(audioContext.destination);
                 masterGain.gain.value = volumeSlider.value;
                 
-                // Volúmenes para música divertida
                 kickGain.gain.value = 0.5;
                 snareGain.gain.value = 0.4;
-                hihatGain.gain.value = 0.25;
+                hihatGain.gain.value = 0.3;
                 bassGain.gain.value = 0.4;
-                leadGain.gain.value = 0.3;
-                arpGain.gain.value = 0.2;
+                leadGain.gain.value = 0.35;
+                arpGain.gain.value = 0.25;
                 
                 startMusic();
             } catch (e) {
@@ -398,14 +337,14 @@
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
             osc.type = 'triangle';
-            osc.frequency.setValueAtTime(100, time);
-            osc.frequency.exponentialRampToValueAtTime(50, time + 0.1);
-            gain.gain.setValueAtTime(0.5, time);
-            gain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
+            osc.frequency.setValueAtTime(120, time);
+            osc.frequency.exponentialRampToValueAtTime(60, time + 0.08);
+            gain.gain.setValueAtTime(0.6, time);
+            gain.gain.exponentialRampToValueAtTime(0.01, time + 0.08);
             osc.connect(gain);
             gain.connect(kickGain);
             osc.start(time);
-            osc.stop(time + 0.1);
+            osc.stop(time + 0.08);
         }
 
         function playSnare(time) {
@@ -414,12 +353,12 @@
             const gain = audioContext.createGain();
             
             osc1.type = 'triangle';
-            osc1.frequency.value = 200;
+            osc1.frequency.value = 250;
             osc2.type = 'square';
-            osc2.frequency.value = 150;
+            osc2.frequency.value = 200;
             
-            gain.gain.setValueAtTime(0.3, time);
-            gain.gain.exponentialRampToValueAtTime(0.01, time + 0.15);
+            gain.gain.setValueAtTime(0.4, time);
+            gain.gain.exponentialRampToValueAtTime(0.01, time + 0.12);
             
             osc1.connect(gain);
             osc2.connect(gain);
@@ -427,21 +366,21 @@
             
             osc1.start(time);
             osc2.start(time);
-            osc1.stop(time + 0.15);
-            osc2.stop(time + 0.15);
+            osc1.stop(time + 0.12);
+            osc2.stop(time + 0.12);
         }
 
         function playHiHat(time) {
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
             osc.type = 'square';
-            osc.frequency.value = 1200;
-            gain.gain.setValueAtTime(0.2, time);
-            gain.gain.exponentialRampToValueAtTime(0.01, time + 0.05);
+            osc.frequency.value = 1500;
+            gain.gain.setValueAtTime(0.25, time);
+            gain.gain.exponentialRampToValueAtTime(0.01, time + 0.04);
             osc.connect(gain);
             gain.connect(hihatGain);
             osc.start(time);
-            osc.stop(time + 0.05);
+            osc.stop(time + 0.04);
         }
 
         function playBassNote(time, duration, note) {
@@ -450,9 +389,8 @@
             osc.type = 'sawtooth';
             osc.frequency.value = 440 * Math.pow(2, (note - 69) / 12);
             
-            // Envolvente divertida
             gain.gain.setValueAtTime(0, time);
-            gain.gain.linearRampToValueAtTime(0.4, time + 0.02);
+            gain.gain.linearRampToValueAtTime(0.5, time + 0.01);
             gain.gain.exponentialRampToValueAtTime(0.01, time + duration * 0.8);
             
             osc.connect(gain);
@@ -467,18 +405,17 @@
             osc.type = 'square';
             osc.frequency.value = 440 * Math.pow(2, (note - 69) / 12);
             
-            // Vibrato divertido
             const lfo = audioContext.createOscillator();
             const lfoGain = audioContext.createGain();
-            lfo.frequency.value = 8;
-            lfoGain.gain.value = 5;
+            lfo.frequency.value = 12;
+            lfoGain.gain.value = 8;
             lfo.connect(lfoGain);
             lfoGain.connect(osc.frequency);
             lfo.start(time);
             lfo.stop(time + duration);
             
             gain.gain.setValueAtTime(0, time);
-            gain.gain.linearRampToValueAtTime(0.25, time + 0.01);
+            gain.gain.linearRampToValueAtTime(0.3, time + 0.01);
             gain.gain.exponentialRampToValueAtTime(0.01, time + duration);
             
             osc.connect(gain);
@@ -487,9 +424,9 @@
             osc.stop(time + duration);
         }
 
-        function playArpeggio(time, duration, notes) {
-            const noteDuration = duration / 8;
-            for (let i = 0; i < 8; i++) {
+        function playArpeggio(time, duration, notes, speed = 1) {
+            const noteDuration = duration / (16 * speed);
+            for (let i = 0; i < 16 * speed; i++) {
                 const noteTime = time + (i * noteDuration);
                 const note = notes[(beatCount + i) % notes.length] + 24;
                 
@@ -500,7 +437,7 @@
                 osc.frequency.value = 440 * Math.pow(2, (note - 69) / 12);
                 
                 gain.gain.setValueAtTime(0, noteTime);
-                gain.gain.linearRampToValueAtTime(0.15, noteTime + 0.005);
+                gain.gain.linearRampToValueAtTime(0.2, noteTime + 0.003);
                 gain.gain.exponentialRampToValueAtTime(0.01, noteTime + noteDuration * 0.8);
                 
                 osc.connect(gain);
@@ -515,14 +452,14 @@
             if (!audioContext || !musicEnabled || !gameActive || gamePaused) return;
             stopMusic();
             nextNoteTime = audioContext.currentTime;
-            schedulePartyBeats();
+            scheduleHyperBeats();
         }
 
         function stopMusic() {
             if (timerID) clearTimeout(timerID);
         }
 
-        function schedulePartyBeats() {
+        function scheduleHyperBeats() {
             if (!audioContext || !musicEnabled || !gameActive || gamePaused) return;
 
             const now = audioContext.currentTime;
@@ -531,39 +468,37 @@
             while (nextNoteTime < now + 0.1) {
                 const beatDuration = 60 / currentBPM;
                 
-                // Ritmo base de fiesta
-                if (beatCount % 4 === 0) playKick(nextNoteTime);
+                // Ritmo más rápido y denso
+                if (beatCount % 2 === 0) playKick(nextNoteTime);
                 if (beatCount % 4 === 2) playSnare(nextNoteTime);
-                if (beatCount % 2 === 0) playHiHat(nextNoteTime);
+                playHiHat(nextNoteTime);
                 
-                // Bajo saltarín
-                if (beatCount % 2 === 0) {
-                    const bassNote = happyMelodies.bass[beatCount % happyMelodies.bass.length];
-                    playBassNote(nextNoteTime, beatDuration * 2, bassNote);
+                // Bajo continuo
+                const bassNote = hyperMelodies.bass[beatCount % hyperMelodies.bass.length];
+                playBassNote(nextNoteTime, beatDuration, bassNote);
+                
+                // Melodía principal muy activa
+                if (beatCount % 1 === 0) {
+                    const leadNote = hyperMelodies.lead[beatCount % hyperMelodies.lead.length];
+                    playLeadNote(nextNoteTime, beatDuration * 0.8, leadNote + (phase * 2));
                 }
                 
-                // Melodía principal (más frecuente)
+                // Arpegios hiperrápidos
                 if (beatCount % 2 === 0) {
-                    const leadNote = happyMelodies.lead[beatCount % happyMelodies.lead.length];
-                    playLeadNote(nextNoteTime, beatDuration * 1.5, leadNote + (phase * 2));
-                }
-                
-                // Arpegios rápidos (muy electrónicos)
-                if (beatCount % 4 === 0) {
-                    playArpeggio(nextNoteTime, beatDuration * 2, happyMelodies.arp);
+                    playArpeggio(nextNoteTime, beatDuration * 2, hyperMelodies.fastArp, 2);
                 }
                 
                 // Notas extra cuando hay power-up
-                if (player.invincible && beatCount % 2 === 0) {
-                    const extraNote = happyMelodies.chords[beatCount % happyMelodies.chords.length];
-                    playLeadNote(nextNoteTime, beatDuration, extraNote + 24);
+                if (player.invincible) {
+                    const extraNote = hyperMelodies.arp[beatCount % hyperMelodies.arp.length];
+                    playLeadNote(nextNoteTime, beatDuration * 0.5, extraNote + 36);
                 }
                 
                 nextNoteTime += beatDuration;
                 beatCount++;
             }
             
-            timerID = setTimeout(schedulePartyBeats, 25);
+            timerID = setTimeout(scheduleHyperBeats, 20);
         }
 
         // ========== LÓGICA DEL JUEGO ==========
@@ -581,7 +516,7 @@
 
         function updateSpeed() {
             speedMultiplier = 1.0 + (score * BASE_INCREMENT);
-            currentBPM = Math.min(200, 140 + (score * 0.1));
+            currentBPM = Math.min(220, 160 + (score * 0.15));
             bpmElement.textContent = Math.round(currentBPM);
             speedElement.textContent = speedMultiplier.toFixed(2) + 'x';
         }
@@ -594,30 +529,14 @@
                 
                 // Reposicionar al personaje según la gravedad
                 if (gravityDirection === -1) {
-                    player.y = 50; // ARRIBA en modo inverso
+                    player.y = 50; // ARRIBA
                 } else {
-                    player.y = 380; // ABAJO en modo normal
+                    player.y = 380; // ABAJO
                 }
                 
-                // Crear efecto de partículas
-                for (let i = 0; i < 20; i++) {
-                    createPartyEffect();
-                }
-                
+                // Limpiar obstáculos
                 obstacles = [];
-                flipJustHappened = true;
-                setTimeout(() => flipJustHappened = false, 1000);
             }
-        }
-
-        function createPartyEffect() {
-            const effect = document.createElement('div');
-            effect.className = 'party-mode';
-            effect.textContent = ['⚡','🎵','💫','✨','🎸'][Math.floor(Math.random() * 5)];
-            effect.style.left = Math.random() * window.innerWidth + 'px';
-            effect.style.top = Math.random() * window.innerHeight + 'px';
-            document.body.appendChild(effect);
-            setTimeout(() => effect.remove(), 1000);
         }
 
         function updatePlatform() {
@@ -655,9 +574,9 @@
         function updatePlayer() {
             if (!gameActive || gamePaused) return;
 
-            // Movimiento horizontal MÁS RÁPIDO
-            if (leftPressed && player.x > 0) player.x -= 7; // Antes 5
-            if (rightPressed && player.x + player.width < canvas.width) player.x += 7; // Antes 5
+            // Movimiento horizontal rápido
+            if (leftPressed && player.x > 0) player.x -= 8;
+            if (rightPressed && player.x + player.width < canvas.width) player.x += 8;
 
             // Salto
             if (spacePressed && (player.grounded || player.onPlatform)) {
@@ -682,8 +601,8 @@
                     player.y = 0;
                     player.velocityY = 0;
                 }
-            } else { // Invertida - AHORA FUNCIONA CORRECTAMENTE
-                if (player.y < 50) { // Límite SUPERIOR cuando está invertido
+            } else { // Invertida
+                if (player.y < 50) { // Límite SUPERIOR
                     player.y = 50;
                     player.velocityY = 0;
                     player.grounded = true;
@@ -695,7 +614,9 @@
                 }
             }
 
-            // Colisión con plataforma (adaptada para gravedad inversa)
+            // Colisión con plataforma
+            let onPlatformNow = false;
+            
             if (platform.visible) {
                 if (gravityDirection === 1) { // Modo normal
                     if (player.velocityY >= 0 &&
@@ -706,16 +627,9 @@
                         
                         player.y = platform.y - player.height;
                         player.velocityY = 0;
-                        player.onPlatform = true;
-                        player.grounded = false;
-                        
-                        // Activar invencibilidad
-                        player.invincible = true;
-                        player.invincibleTime = player.maxInvincibleTime;
-                        player.width = player.bigWidth;
-                        player.height = player.bigHeight;
+                        onPlatformNow = true;
                     }
-                } else { // Modo invertido - CORREGIDO
+                } else { // Modo invertido - CORREGIDO: la plataforma está ARRIBA
                     if (player.velocityY <= 0 &&
                         player.x + player.width > platform.x &&
                         player.x < platform.x + platform.width &&
@@ -724,31 +638,35 @@
                         
                         player.y = platform.y + platform.height;
                         player.velocityY = 0;
-                        player.onPlatform = true;
-                        player.grounded = false;
-                        
-                        // Activar invencibilidad
-                        player.invincible = true;
-                        player.invincibleTime = player.maxInvincibleTime;
-                        player.width = player.bigWidth;
-                        player.height = player.bigHeight;
+                        onPlatformNow = true;
                     }
                 }
             }
 
-            // Si está en plataforma, mantener invencibilidad
+            // Actualizar estado de plataforma
+            player.onPlatform = onPlatformNow;
+            
+            // GESTIÓN DE INVENCIBILIDAD
             if (player.onPlatform) {
+                // En plataforma = SIEMPRE invencible
                 player.invincible = true;
                 player.invincibleTime = player.maxInvincibleTime;
                 player.width = player.bigWidth;
                 player.height = player.bigHeight;
-            }
-
-            // Si no está en plataforma, disminuir tiempo de invencibilidad
-            if (!player.onPlatform && player.invincible) {
-                player.invincibleTime--;
-                
-                if (player.invincibleTime <= 0) {
+                player.burgerPower = false;
+            } else {
+                // No está en plataforma
+                if (player.burgerPower) {
+                    // Si tiene poder de hamburguesa, contar tiempo
+                    player.invincibleTime--;
+                    if (player.invincibleTime <= 0) {
+                        player.invincible = false;
+                        player.burgerPower = false;
+                        player.width = player.normalWidth;
+                        player.height = player.normalHeight;
+                    }
+                } else {
+                    // Sin ningún poder
                     player.invincible = false;
                     player.width = player.normalWidth;
                     player.height = player.normalHeight;
@@ -789,7 +707,7 @@
                 ...type,
                 x: Math.random() * (canvas.width - type.width),
                 y: yStart,
-                speed: 3 + (speedMultiplier * 2) + Math.random() * 2,
+                speed: 3.5 + (speedMultiplier * 2.5) + Math.random() * 2,
                 passed: false,
                 direction: gravityDirection === 1 ? 1 : -1
             };
@@ -802,7 +720,7 @@
                 y: yStart,
                 width: 30,
                 height: 30,
-                speed: 2.5 + (speedMultiplier * 2),
+                speed: 3 + (speedMultiplier * 2.2),
                 collected: false,
                 direction: gravityDirection === 1 ? 1 : -1
             };
@@ -811,10 +729,10 @@
         function updateObstacles() {
             if (!gameActive || gamePaused) return;
 
-            const spawnRate = Math.max(18, 40 - Math.floor(speedMultiplier * 4));
+            const spawnRate = Math.max(15, 35 - Math.floor(speedMultiplier * 5));
             
             if (frameCount % spawnRate === 0) obstacles.push(createObstacle());
-            if (frameCount % 120 === 0 && burgers.length < 1) burgers.push(createBurger());
+            if (frameCount % 100 === 0 && burgers.length < 1) burgers.push(createBurger());
 
             for (let i = obstacles.length - 1; i >= 0; i--) {
                 const obs = obstacles[i];
@@ -859,19 +777,19 @@
                     
                     burger.collected = true;
                     
+                    // HAMBURGUESA = poder extra (solo si no está en plataforma)
                     if (!player.onPlatform) {
                         player.invincible = true;
                         player.invincibleTime = player.maxInvincibleTime;
                         player.width = player.bigWidth;
                         player.height = player.bigHeight;
+                        player.burgerPower = true;
                     }
                     
                     score += 50;
                     scoreElement.textContent = score;
                     updateSpeed();
                     checkGravityFlip();
-                    
-                    createPartyEffect();
                 }
 
                 if (burger.y > canvas.height + 100 || burger.y < -100) burgers.splice(i, 1);
@@ -883,20 +801,20 @@
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Fondo divertido
-            const time = Date.now() / 200;
+            // Fondo hiperactivo
+            const time = Date.now() / 100;
             const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-            gradient.addColorStop(0, `hsl(${200 + Math.sin(time) * 30}, 70%, 10%)`);
-            gradient.addColorStop(1, `hsl(${300 + Math.cos(time) * 30}, 70%, 15%)`);
+            gradient.addColorStop(0, `hsl(${200 + Math.sin(time) * 50}, 80%, 10%)`);
+            gradient.addColorStop(1, `hsl(${300 + Math.cos(time) * 50}, 80%, 15%)`);
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Líneas de ritmo
-            ctx.strokeStyle = `rgba(255, 255, 0, ${0.1 + Math.sin(beatCount * 0.5) * 0.05})`;
-            for (let i = 0; i < canvas.width; i += 40) {
+            // Líneas de ritmo muy activas
+            ctx.strokeStyle = `rgba(255, 255, 0, ${0.2 + Math.sin(beatCount * 1) * 0.1})`;
+            for (let i = 0; i < canvas.width; i += 30) {
                 ctx.beginPath();
                 ctx.moveTo(i, 0);
-                ctx.lineTo(i, canvas.height);
+                ctx.lineTo(i + Math.sin(time) * 20, canvas.height);
                 ctx.stroke();
             }
 
@@ -912,7 +830,7 @@
                 ctx.fillRect(0, 40, canvas.width, 5);
             }
 
-            // Plataforma
+            // Plataforma (se dibuja en la misma posición siempre)
             if (platform.visible) {
                 ctx.shadowColor = '#ffff00';
                 ctx.shadowBlur = 30;
@@ -944,16 +862,6 @@
                        player.width/2, player.height/2, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Ojos
-            ctx.fillStyle = 'white';
-            ctx.shadowBlur = 10;
-            ctx.beginPath();
-            ctx.arc(player.x + player.width/3, player.y + player.height/3, 3, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(player.x + 2*player.width/3, player.y + player.height/3, 3, 0, Math.PI * 2);
-            ctx.fill();
-
             // Hamburguesas
             burgers.forEach(burger => {
                 ctx.shadowColor = '#ffff00';
@@ -979,13 +887,9 @@
                 ctx.fillText('⬆️ MODO LOCO ⬆️', 200, 100);
             }
             
-            if (flipJustHappened) {
-                ctx.font = 'bold 36px Arial';
-                ctx.fillStyle = '#ffff00';
-                ctx.shadowBlur = 50;
-                ctx.shadowColor = '#ff00ff';
-                ctx.fillText('¡GRAVEDAD LOCO!', 150, 200);
-            }
+            ctx.font = 'bold 16px Arial';
+            ctx.fillStyle = '#00ffff';
+            ctx.fillText(`🔄 ${nextGravityFlip - score} pts`, 10, 30);
         }
 
         function gameLoop() {
@@ -1007,19 +911,20 @@
             player.height = player.normalHeight;
             player.invincible = false;
             player.invincibleTime = 0;
+            player.burgerPower = false;
             player.grounded = true;
             player.onPlatform = false;
             gravityDirection = 1;
             nextGravityFlip = 1000;
             lastFlipScore = 0;
             speedMultiplier = 1.0;
-            currentBPM = 140;
+            currentBPM = 160;
             
             frameCount = 0;
             score = 0;
             scoreElement.textContent = '0';
             speedElement.textContent = '1.00x';
-            bpmElement.textContent = '140';
+            bpmElement.textContent = '160';
             powerFill.style.width = '0%';
             powerTimeElement.textContent = '0s';
             gameActive = true;
@@ -1047,17 +952,17 @@
                 if (audioContext.state === 'suspended') {
                     audioContext.resume();
                     musicEnabled = true;
-                    musicButton.textContent = '🔊 ELECTRO';
+                    musicButton.textContent = '🔊 MEGA ELECTRO';
                     startMusic();
                 } else if (musicEnabled) {
                     audioContext.suspend();
                     musicEnabled = false;
-                    musicButton.textContent = '🔈 ELECTRO';
+                    musicButton.textContent = '🔈 MEGA ELECTRO';
                     stopMusic();
                 } else {
                     audioContext.resume();
                     musicEnabled = true;
-                    musicButton.textContent = '🔊 ELECTRO';
+                    musicButton.textContent = '🔊 MEGA ELECTRO';
                     startMusic();
                 }
             }
