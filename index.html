@@ -2,24 +2,28 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🍔 GRAVITY PARTY - LA LOQUETA ⚡</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>🍔 GRAVITY PARTY - DUAL CONTROL 🍔</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
-        body {
-            font-family: 'Arial', sans-serif;
+        html, body {
+            width: 100%;
+            min-height: 100vh;
             background: #000;
+            font-family: 'Arial', sans-serif;
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            color: white;
-            overflow: hidden;
+            padding: 10px;
         }
 
         .game-container {
@@ -29,11 +33,14 @@
             border-radius: 30px;
             box-shadow: 0 0 100px #ff00ff;
             border: 3px solid #ffff00;
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
         }
 
         h1 {
             margin-bottom: 15px;
-            font-size: 2.5em;
+            font-size: 2.2rem;
             background: linear-gradient(45deg, #ff0000, #ff00ff, #00ffff, #ffff00);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -53,6 +60,10 @@
             margin: 0 auto;
             box-shadow: 0 0 50px #ff00ff;
             transition: transform 0.3s;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 700/450;
+            touch-action: none;
         }
 
         .stats-panel {
@@ -66,14 +77,14 @@
         }
 
         .stat {
-            font-size: 1.2em;
+            font-size: 1.2rem;
             color: #00ffff;
         }
 
         .stat span {
             color: #ffff00;
             font-weight: bold;
-            font-size: 1.8em;
+            font-size: 1.8rem;
             text-shadow: 0 0 20px #ffff00;
         }
 
@@ -101,16 +112,97 @@
             transition: width 0.1s;
         }
 
+        /* CONTROLES TÁCTILES - SOLO VISIBLE EN MÓVIL */
+        .touch-controls {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .touch-row {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .touch-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 0, 0.3);
+            border: 3px solid #ffff00;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: #ffff00;
+            box-shadow: 0 0 30px rgba(255, 255, 0, 0.3);
+            cursor: pointer;
+            transition: 0.05s;
+            touch-action: manipulation;
+        }
+
+        .touch-btn.active {
+            background: rgba(255, 255, 0, 0.8);
+            transform: scale(0.9);
+            box-shadow: 0 0 40px #ffff00;
+        }
+
+        .touch-btn span {
+            font-size: 0.6rem;
+            margin-top: 5px;
+        }
+
+        .jump-btn {
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 0, 255, 0.3);
+            border-color: #ff00ff;
+            font-size: 3rem;
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.3);
+        }
+
+        .jump-btn.active {
+            background: rgba(255, 0, 255, 0.8);
+            box-shadow: 0 0 40px #ff00ff;
+        }
+
+        /* INDICADOR DE TECLAS PARA DESKTOP */
+        .keyboard-hint {
+            display: block;
+            color: #00ffff;
+            font-size: 1rem;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0,255,255,0.1);
+            border-radius: 50px;
+            border: 1px solid #00ffff;
+        }
+
+        .keyboard-hint span {
+            display: inline-block;
+            padding: 5px 15px;
+            margin: 0 5px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid #ffff00;
+            border-radius: 10px;
+            color: #ffff00;
+            font-weight: bold;
+        }
+
         .controls {
             margin-top: 15px;
             display: flex;
             gap: 10px;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         button {
             padding: 10px 25px;
-            font-size: 1em;
+            font-size: 1rem;
             background: transparent;
             color: white;
             border: 2px solid #ffff00;
@@ -118,6 +210,7 @@
             cursor: pointer;
             transition: 0.2s;
             font-weight: bold;
+            min-width: 120px;
         }
 
         button:hover {
@@ -126,12 +219,17 @@
             box-shadow: 0 0 30px #ffff00;
         }
 
+        button:active {
+            transform: scale(0.95);
+        }
+
         .music-control {
             margin-top: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .volume-slider {
@@ -139,11 +237,22 @@
             height: 5px;
             background: linear-gradient(90deg, #ffff00, #ff00ff);
             border-radius: 5px;
+            -webkit-appearance: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 15px #ffff00;
         }
 
         .game-over {
             color: #ff0000;
-            font-size: 2.5em;
+            font-size: 2rem;
             display: none;
             text-shadow: 0 0 30px #ff0000;
             margin: 10px 0;
@@ -153,16 +262,96 @@
             display: block;
         }
 
-        .flip-warning {
-            color: #ff00ff;
-            font-size: 1.5em;
-            animation: flipPulse 0.2s infinite;
+        .instructions {
+            margin-top: 10px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.8rem;
+            line-height: 1.4;
         }
 
-        @keyframes flipPulse {
-            0% { opacity: 0.5; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.3); }
-            100% { opacity: 0.5; transform: scale(1); }
+        /* MEDIA QUERY PARA MÓVIL */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+                align-items: flex-start;
+                min-height: 100vh;
+                height: 100vh;
+                overflow: hidden;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+            }
+
+            .game-container {
+                padding: 10px;
+                height: 100%;
+                max-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 5px;
+                flex-shrink: 0;
+            }
+
+            .stats-panel {
+                margin-top: 5px;
+                padding: 5px;
+                flex-shrink: 0;
+            }
+
+            .stat {
+                font-size: 0.8rem;
+            }
+
+            .stat span {
+                font-size: 1.2rem;
+            }
+
+            .power-bar-container {
+                margin-top: 5px;
+                flex-shrink: 0;
+            }
+
+            .power-bar {
+                width: 100px;
+            }
+
+            .touch-controls {
+                display: flex;
+                flex-shrink: 0;
+            }
+
+            .keyboard-hint {
+                display: none;
+            }
+
+            .controls {
+                margin-top: 5px;
+                flex-shrink: 0;
+            }
+
+            button {
+                padding: 8px 15px;
+                font-size: 0.8rem;
+                min-width: 90px;
+            }
+
+            .instructions {
+                font-size: 0.65rem;
+                margin-top: 5px;
+                flex-shrink: 0;
+            }
+
+            .music-control {
+                margin-top: 5px;
+                flex-shrink: 0;
+            }
         }
     </style>
 </head>
@@ -174,7 +363,7 @@
         
         <div class="stats-panel">
             <div class="stat">PUNTOS <span id="score">0</span></div>
-            <div class="stat">🎵 BPM <span id="bpm">160</span></div>
+            <div class="stat">🎵 <span id="bpm">160</span></div>
             <div class="stat">⚡ <span id="speed">1.0x</span></div>
         </div>
 
@@ -184,6 +373,31 @@
                 <div class="power-fill" id="powerFill"></div>
             </div>
             <span style="color: #ffff00;" id="powerTime">0s</span>
+        </div>
+
+        <!-- HINT PARA TECLADO (DESKTOP) -->
+        <div class="keyboard-hint">
+            <span>←</span> <span>→</span> <span>ESPACIO</span> PARA MOVERTE
+        </div>
+
+        <!-- CONTROLES TÁCTILES (MÓVIL) -->
+        <div class="touch-controls">
+            <div class="touch-row">
+                <div class="touch-btn" id="touchLeft">
+                    ←
+                    <span>IZQ</span>
+                </div>
+                <div class="touch-btn" id="touchRight">
+                    →
+                    <span>DER</span>
+                </div>
+            </div>
+            <div class="touch-row">
+                <div class="touch-btn jump-btn" id="touchJump">
+                    ⬆️
+                    <span>SALTO</span>
+                </div>
+            </div>
         </div>
 
         <div class="game-over" id="gameOver">
@@ -196,13 +410,13 @@
         </div>
 
         <div class="music-control">
-            <button onclick="toggleMusic()" id="musicButton">🔊 MEGA ELECTRO</button>
+            <button onclick="toggleMusic()" id="musicButton">🔊</button>
             <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.1" value="0.5">
         </div>
         
         <div class="instructions">
-            <p>← → MOVER | ESPACIO SALTAR | 🟡 BARRA = 3 SEG DE PODER MIENTRAS ESTÁS</p>
-            <p>⚡ GRAVEDAD SE INVIERTE CADA 1000 PTS | 🍔 HAMBURGUESA = 3 SEG EXTRA</p>
+            <p>🟡 BARRA = 3s PODER | 🍔 HAMBURGUESA = 3s EXTRA</p>
+            <p>⚡ CADA 1000 PUNTOS: ¡GRAVEDAD INVERSA!</p>
         </div>
     </div>
 
@@ -218,17 +432,16 @@
         const musicButton = document.getElementById('musicButton');
         const volumeSlider = document.getElementById('volumeSlider');
 
-        // ========== AUDIO MEGA ACTIVO ==========
+        // ========== AUDIO ==========
         let audioContext;
         let musicEnabled = true;
         let masterGain;
         let kickGain, snareGain, hihatGain, bassGain, leadGain, arpGain;
-        let currentBPM = 160; // Más rápido
+        let currentBPM = 160;
         let beatCount = 0;
         let nextNoteTime = 0;
         let timerID;
 
-        // Secuencias MUY activas
         const hyperMelodies = {
             bass: [36, 38, 43, 48, 51, 55, 58, 60, 58, 55, 51, 48, 43, 38, 36, 43],
             lead: [60, 64, 67, 72, 76, 79, 84, 88, 91, 88, 84, 79, 76, 72, 67, 64],
@@ -253,8 +466,8 @@
             onPlatform: false,
             invincible: false,
             invincibleTime: 0,
-            maxInvincibleTime: 180, // 3 segundos
-            burgerPower: false, // Si viene de hamburguesa
+            maxInvincibleTime: 180,
+            burgerPower: false,
             trail: []
         };
 
@@ -266,7 +479,7 @@
             height: 15,
             visible: true,
             direction: 1,
-            speed: 4.0, // Más rápida
+            speed: 5.0,
             minX: 50,
             maxX: 550,
             timer: 0,
@@ -291,12 +504,117 @@
         let speedMultiplier = 1.0;
         const BASE_INCREMENT = 0.0012;
 
-        // Controles
+        // Controles (soportan teclado y táctil)
         let leftPressed = false;
         let rightPressed = false;
         let spacePressed = false;
 
-        // ========== FUNCIONES DE AUDIO HIPERACTIVAS ==========
+        // ========== EVENTOS DE TECLADO (DESKTOP) ==========
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') { 
+                leftPressed = true; 
+                e.preventDefault(); 
+            }
+            else if (e.key === 'ArrowRight') { 
+                rightPressed = true; 
+                e.preventDefault(); 
+            }
+            else if (e.key === ' ') { 
+                spacePressed = true; 
+                e.preventDefault(); 
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowLeft') { 
+                leftPressed = false; 
+                e.preventDefault(); 
+            }
+            else if (e.key === 'ArrowRight') { 
+                rightPressed = false; 
+                e.preventDefault(); 
+            }
+            else if (e.key === ' ') { 
+                spacePressed = false; 
+                e.preventDefault(); 
+            }
+        });
+
+        // ========== EVENTOS TÁCTILES (MÓVIL) ==========
+        function setupTouchControls() {
+            const leftBtn = document.getElementById('touchLeft');
+            const rightBtn = document.getElementById('touchRight');
+            const jumpBtn = document.getElementById('touchJump');
+
+            if (!leftBtn || !rightBtn || !jumpBtn) return;
+
+            const handleTouchStart = (e, direction) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const btn = e.currentTarget;
+                btn.classList.add('active');
+                
+                if (direction === 'left') leftPressed = true;
+                if (direction === 'right') rightPressed = true;
+                if (direction === 'jump') spacePressed = true;
+            };
+
+            const handleTouchEnd = (e, direction) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const btn = e.currentTarget;
+                btn.classList.remove('active');
+                
+                if (direction === 'left') leftPressed = false;
+                if (direction === 'right') rightPressed = false;
+                if (direction === 'jump') spacePressed = false;
+            };
+
+            // Limpiar eventos anteriores
+            leftBtn.removeEventListener('touchstart', handleTouchStart);
+            rightBtn.removeEventListener('touchstart', handleTouchStart);
+            jumpBtn.removeEventListener('touchstart', handleTouchStart);
+            
+            leftBtn.removeEventListener('touchend', handleTouchEnd);
+            rightBtn.removeEventListener('touchend', handleTouchEnd);
+            jumpBtn.removeEventListener('touchend', handleTouchEnd);
+            
+            leftBtn.removeEventListener('touchcancel', handleTouchEnd);
+            rightBtn.removeEventListener('touchcancel', handleTouchEnd);
+            jumpBtn.removeEventListener('touchcancel', handleTouchEnd);
+
+            // Asignar nuevos eventos
+            leftBtn.addEventListener('touchstart', (e) => handleTouchStart(e, 'left'), { passive: false });
+            leftBtn.addEventListener('touchend', (e) => handleTouchEnd(e, 'left'), { passive: false });
+            leftBtn.addEventListener('touchcancel', (e) => handleTouchEnd(e, 'left'), { passive: false });
+
+            rightBtn.addEventListener('touchstart', (e) => handleTouchStart(e, 'right'), { passive: false });
+            rightBtn.addEventListener('touchend', (e) => handleTouchEnd(e, 'right'), { passive: false });
+            rightBtn.addEventListener('touchcancel', (e) => handleTouchEnd(e, 'right'), { passive: false });
+
+            jumpBtn.addEventListener('touchstart', (e) => handleTouchStart(e, 'jump'), { passive: false });
+            jumpBtn.addEventListener('touchend', (e) => handleTouchEnd(e, 'jump'), { passive: false });
+            jumpBtn.addEventListener('touchcancel', (e) => handleTouchEnd(e, 'jump'), { passive: false });
+
+            // También soporte para mouse (útil en desktop para probar)
+            if (window.innerWidth <= 768) {
+                leftBtn.addEventListener('mousedown', (e) => { e.preventDefault(); leftPressed = true; });
+                leftBtn.addEventListener('mouseup', (e) => { e.preventDefault(); leftPressed = false; });
+                leftBtn.addEventListener('mouseleave', (e) => { leftPressed = false; });
+
+                rightBtn.addEventListener('mousedown', (e) => { e.preventDefault(); rightPressed = true; });
+                rightBtn.addEventListener('mouseup', (e) => { e.preventDefault(); rightPressed = false; });
+                rightBtn.addEventListener('mouseleave', (e) => { rightPressed = false; });
+
+                jumpBtn.addEventListener('mousedown', (e) => { e.preventDefault(); spacePressed = true; });
+                jumpBtn.addEventListener('mouseup', (e) => { e.preventDefault(); spacePressed = false; });
+                jumpBtn.addEventListener('mouseleave', (e) => { spacePressed = false; });
+            }
+        }
+
+        // ========== FUNCIONES DE AUDIO ==========
         function initAudio() {
             try {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -463,32 +781,26 @@
             if (!audioContext || !musicEnabled || !gameActive || gamePaused) return;
 
             const now = audioContext.currentTime;
-            const phase = Math.floor(score / 1000) + 1;
             
             while (nextNoteTime < now + 0.1) {
                 const beatDuration = 60 / currentBPM;
                 
-                // Ritmo más rápido y denso
                 if (beatCount % 2 === 0) playKick(nextNoteTime);
                 if (beatCount % 4 === 2) playSnare(nextNoteTime);
                 playHiHat(nextNoteTime);
                 
-                // Bajo continuo
                 const bassNote = hyperMelodies.bass[beatCount % hyperMelodies.bass.length];
                 playBassNote(nextNoteTime, beatDuration, bassNote);
                 
-                // Melodía principal muy activa
                 if (beatCount % 1 === 0) {
                     const leadNote = hyperMelodies.lead[beatCount % hyperMelodies.lead.length];
-                    playLeadNote(nextNoteTime, beatDuration * 0.8, leadNote + (phase * 2));
+                    playLeadNote(nextNoteTime, beatDuration * 0.8, leadNote);
                 }
                 
-                // Arpegios hiperrápidos
                 if (beatCount % 2 === 0) {
                     playArpeggio(nextNoteTime, beatDuration * 2, hyperMelodies.fastArp, 2);
                 }
                 
-                // Notas extra cuando hay power-up
                 if (player.invincible) {
                     const extraNote = hyperMelodies.arp[beatCount % hyperMelodies.arp.length];
                     playLeadNote(nextNoteTime, beatDuration * 0.5, extraNote + 36);
@@ -502,18 +814,6 @@
         }
 
         // ========== LÓGICA DEL JUEGO ==========
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') { leftPressed = true; e.preventDefault(); }
-            else if (e.key === 'ArrowRight') { rightPressed = true; e.preventDefault(); }
-            else if (e.key === ' ') { spacePressed = true; e.preventDefault(); }
-        });
-
-        document.addEventListener('keyup', (e) => {
-            if (e.key === 'ArrowLeft') { leftPressed = false; e.preventDefault(); }
-            else if (e.key === 'ArrowRight') { rightPressed = false; e.preventDefault(); }
-            else if (e.key === ' ') { spacePressed = false; e.preventDefault(); }
-        });
-
         function updateSpeed() {
             speedMultiplier = 1.0 + (score * BASE_INCREMENT);
             currentBPM = Math.min(220, 160 + (score * 0.15));
@@ -527,14 +827,12 @@
                 lastFlipScore = score;
                 nextGravityFlip = score + 1000;
                 
-                // Reposicionar al personaje según la gravedad
                 if (gravityDirection === -1) {
-                    player.y = 50; // ARRIBA
+                    player.y = 50;
                 } else {
-                    player.y = 380; // ABAJO
+                    player.y = 380;
                 }
                 
-                // Limpiar obstáculos
                 obstacles = [];
             }
         }
@@ -574,9 +872,9 @@
         function updatePlayer() {
             if (!gameActive || gamePaused) return;
 
-            // Movimiento horizontal rápido
-            if (leftPressed && player.x > 0) player.x -= 8;
-            if (rightPressed && player.x + player.width < canvas.width) player.x += 8;
+            // Movimiento horizontal (funciona con teclado Y táctil)
+            if (leftPressed && player.x > 0) player.x -= 12;
+            if (rightPressed && player.x + player.width < canvas.width) player.x += 12;
 
             // Salto
             if (spacePressed && (player.grounded || player.onPlatform)) {
@@ -590,7 +888,7 @@
             player.y += player.velocityY;
 
             // Límites según gravedad
-            if (gravityDirection === 1) { // Normal
+            if (gravityDirection === 1) {
                 if (player.y > 380) {
                     player.y = 380;
                     player.velocityY = 0;
@@ -601,8 +899,8 @@
                     player.y = 0;
                     player.velocityY = 0;
                 }
-            } else { // Invertida
-                if (player.y < 50) { // Límite SUPERIOR
+            } else {
+                if (player.y < 50) {
                     player.y = 50;
                     player.velocityY = 0;
                     player.grounded = true;
@@ -618,7 +916,7 @@
             let onPlatformNow = false;
             
             if (platform.visible) {
-                if (gravityDirection === 1) { // Modo normal
+                if (gravityDirection === 1) {
                     if (player.velocityY >= 0 &&
                         player.x + player.width > platform.x &&
                         player.x < platform.x + platform.width &&
@@ -629,7 +927,7 @@
                         player.velocityY = 0;
                         onPlatformNow = true;
                     }
-                } else { // Modo invertido - CORREGIDO: la plataforma está ARRIBA
+                } else {
                     if (player.velocityY <= 0 &&
                         player.x + player.width > platform.x &&
                         player.x < platform.x + platform.width &&
@@ -643,21 +941,16 @@
                 }
             }
 
-            // Actualizar estado de plataforma
             player.onPlatform = onPlatformNow;
             
-            // GESTIÓN DE INVENCIBILIDAD
             if (player.onPlatform) {
-                // En plataforma = SIEMPRE invencible
                 player.invincible = true;
                 player.invincibleTime = player.maxInvincibleTime;
                 player.width = player.bigWidth;
                 player.height = player.bigHeight;
                 player.burgerPower = false;
             } else {
-                // No está en plataforma
                 if (player.burgerPower) {
-                    // Si tiene poder de hamburguesa, contar tiempo
                     player.invincibleTime--;
                     if (player.invincibleTime <= 0) {
                         player.invincible = false;
@@ -666,18 +959,15 @@
                         player.height = player.normalHeight;
                     }
                 } else {
-                    // Sin ningún poder
                     player.invincible = false;
                     player.width = player.normalWidth;
                     player.height = player.normalHeight;
                 }
             }
 
-            // Trail
             player.trail.push({x: player.x + player.width/2, y: player.y + player.height/2});
             if (player.trail.length > 8) player.trail.shift();
 
-            // UI Power
             if (player.invincible) {
                 const percent = (player.invincibleTime / player.maxInvincibleTime) * 100;
                 powerFill.style.width = percent + '%';
@@ -777,7 +1067,6 @@
                     
                     burger.collected = true;
                     
-                    // HAMBURGUESA = poder extra (solo si no está en plataforma)
                     if (!player.onPlatform) {
                         player.invincible = true;
                         player.invincibleTime = player.maxInvincibleTime;
@@ -801,22 +1090,12 @@
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Fondo hiperactivo
-            const time = Date.now() / 100;
+            // Fondo
             const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-            gradient.addColorStop(0, `hsl(${200 + Math.sin(time) * 50}, 80%, 10%)`);
-            gradient.addColorStop(1, `hsl(${300 + Math.cos(time) * 50}, 80%, 15%)`);
+            gradient.addColorStop(0, '#0a0a2a');
+            gradient.addColorStop(1, '#2a0a2a');
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Líneas de ritmo muy activas
-            ctx.strokeStyle = `rgba(255, 255, 0, ${0.2 + Math.sin(beatCount * 1) * 0.1})`;
-            for (let i = 0; i < canvas.width; i += 30) {
-                ctx.beginPath();
-                ctx.moveTo(i, 0);
-                ctx.lineTo(i + Math.sin(time) * 20, canvas.height);
-                ctx.stroke();
-            }
 
             // Suelo
             ctx.shadowBlur = 30;
@@ -830,7 +1109,7 @@
                 ctx.fillRect(0, 40, canvas.width, 5);
             }
 
-            // Plataforma (se dibuja en la misma posición siempre)
+            // Plataforma
             if (platform.visible) {
                 ctx.shadowColor = '#ffff00';
                 ctx.shadowBlur = 30;
@@ -882,14 +1161,14 @@
             // Indicadores
             if (gravityDirection === -1) {
                 ctx.shadowBlur = 0;
-                ctx.font = 'bold 24px Arial';
+                ctx.font = 'bold 20px Arial';
                 ctx.fillStyle = '#ff00ff';
-                ctx.fillText('⬆️ MODO LOCO ⬆️', 200, 100);
+                ctx.fillText('⬆️ MODO LOCO ⬆️', 180, 100);
             }
             
-            ctx.font = 'bold 16px Arial';
+            ctx.font = 'bold 14px Arial';
             ctx.fillStyle = '#00ffff';
-            ctx.fillText(`🔄 ${nextGravityFlip - score} pts`, 10, 30);
+            ctx.fillText(`🔄 ${nextGravityFlip - score}`, 10, 30);
         }
 
         function gameLoop() {
@@ -952,17 +1231,17 @@
                 if (audioContext.state === 'suspended') {
                     audioContext.resume();
                     musicEnabled = true;
-                    musicButton.textContent = '🔊 MEGA ELECTRO';
+                    musicButton.textContent = '🔊';
                     startMusic();
                 } else if (musicEnabled) {
                     audioContext.suspend();
                     musicEnabled = false;
-                    musicButton.textContent = '🔈 MEGA ELECTRO';
+                    musicButton.textContent = '🔈';
                     stopMusic();
                 } else {
                     audioContext.resume();
                     musicEnabled = true;
-                    musicButton.textContent = '🔊 MEGA ELECTRO';
+                    musicButton.textContent = '🔊';
                     startMusic();
                 }
             }
@@ -977,7 +1256,18 @@
             document.removeEventListener('click', initAudioOnFirstClick);
         });
 
-        window.onload = startGame;
+        // Prevenir scroll en móvil
+        if (window.innerWidth <= 768) {
+            document.body.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+            }, { passive: false });
+        }
+
+        // Inicializar
+        window.onload = () => {
+            setupTouchControls();
+            startGame();
+        };
     </script>
 </body>
 </html>
